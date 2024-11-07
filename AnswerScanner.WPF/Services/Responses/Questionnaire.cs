@@ -12,4 +12,7 @@ public enum QuestionnaireType
 {
     [Display(Name = "Варианты ответа \"Да\" и \"Нет\"")]
     YesNoPossibleAnswers,
+    
+    [Display(Name = "5 возможных вариантов ответа")]
+    FivePossibleAnswers,
 }
