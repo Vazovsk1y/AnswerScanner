@@ -71,6 +71,9 @@ internal class Program
 
         collection.AddSingleton<IQuestionsExtractorFactory, QuestionsExtractorFactory>();
         collection.AddTransient<YesNoPossibleAnswersQuestionsExtractor>();
+
+        collection.AddTransient<QuestionnairesUploadWindow>();
+        collection.AddScoped<QuestionnairesUploadViewModel>();
     }
 
     private static LoggerConfiguration GetLoggerConfiguration()

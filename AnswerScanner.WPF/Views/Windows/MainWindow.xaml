@@ -110,7 +110,7 @@
                         </MenuItem.Header>
                         <MenuItem
                             MinHeight="40"
-                            Command="{Binding UploadFilesCommand}"
+                            Command="{Binding UploadQuestionnairesCommand}"
                             Header="Загрузить">
                             <MenuItem.Icon>
                                 <Image Source="/Resources/Icons/upload.png" Stretch="Fill" />

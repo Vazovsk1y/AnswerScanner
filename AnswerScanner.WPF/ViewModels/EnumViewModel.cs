@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace AnswerScanner.WPF.ViewModels;
 
-public class EnumViewModel<T> where T : Enum
+public record EnumViewModel<T> where T : Enum
 {
     public string? DisplayTitle { get; }
     

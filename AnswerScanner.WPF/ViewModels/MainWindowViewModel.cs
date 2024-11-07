@@ -1,15 +1,16 @@
-﻿using AnswerScanner.WPF.Services.Interfaces;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Extensions.DependencyInjection;
-using System.IO;
 using System.Windows;
-using AnswerScanner.WPF.Extensions;
-using AnswerScanner.WPF.Services.Responses;
+using AnswerScanner.WPF.Infrastructure;
+using AnswerScanner.WPF.Views.Windows;
+using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace AnswerScanner.WPF.ViewModels;
 
-internal partial class MainWindowViewModel : ObservableObject
+internal partial class MainWindowViewModel : 
+    ObservableRecipient,
+    IRecipient<QuestionnairesReadMessage>
 {
     [ObservableProperty]
     private IEnumerable<QuestionnaireViewModel>? _uploadedQuestionnaires;
@@ -17,38 +18,29 @@ internal partial class MainWindowViewModel : ObservableObject
     [ObservableProperty]
     private QuestionnaireViewModel? _selectedQuestionnaire;
 
-    [RelayCommand]
-    private void UploadFiles()
+    public MainWindowViewModel()
     {
-        const string title = "Выберите файлы:";
-        UploadedQuestionnaires = null;
+        IsActive = true;
+    }
 
-        var fileDialog = new Microsoft.Win32.OpenFileDialog
-        {
-            Title = title,
-            RestoreDirectory = true,
-            Multiselect = true,
-        };
-
-        fileDialog.ShowDialog();
-
-        if (fileDialog.FileNames.Length == 0)
-        {
-            return;
-        }
-
+    [RelayCommand]
+    private static void UploadQuestionnaires()
+    {
         using var scope = App.Services.CreateScope();
-        var factory = scope.ServiceProvider.GetRequiredService<IQuestionnaireReaderFactory>();
+        var window = scope.ServiceProvider.GetRequiredService<QuestionnairesUploadWindow>();
+        var viewModel = scope.ServiceProvider.GetRequiredService<QuestionnairesUploadViewModel>();
 
-        var results = fileDialog.FileNames
-            .Select(e =>
-            {
-                var reader = factory.CreateReader(new FileInfo(e));
-                return reader.ReadFromFile(e, QuestionnaireType.YesNoPossibleAnswers);
-            });
+        // TODO: Migrate to MVVM.
         
-        UploadedQuestionnaires = results.Select(e => e.ToViewModel());
-        
-        MessageBox.Show("Выбранные файлы успешно загружены.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+        window.DataContext = viewModel;
+        window.ShowDialog();
+    }
+
+    public void Receive(QuestionnairesReadMessage message)
+    {
+        Application.Current?.Dispatcher.Invoke(() =>
+        {
+            UploadedQuestionnaires = message.Questionnaires;
+        });
     }
 }
