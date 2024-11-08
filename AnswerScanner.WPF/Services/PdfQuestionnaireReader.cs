@@ -18,7 +18,7 @@ internal class PdfQuestionnaireReader : IQuestionnaireReader
 
         var result = new List<Question>();
 
-        var additionalInfo = new Dictionary<string, string>
+        var additionalInformation = new Dictionary<string, string>
         {
             ["Количество страниц"] = pdfDocument.NumberOfPages.ToString(),
         };
@@ -39,17 +39,17 @@ internal class PdfQuestionnaireReader : IQuestionnaireReader
             using var pageAsPng = pdfDocument.GetPageAsPng(page.Number, scale, RGBColor.White, quality);
             pageAsPng.Seek(0, SeekOrigin.Begin);
 
-            var (pageText, pageMeanConfidence, pageQuestions) = ImageQuestionnaireReader.ReadFromPdfPageImage(pageAsPng, questionnaireType);
+            var (pageText, pageMeanConfidence, pageQuestions) = ImageQuestionnaireReader.ReadFromPdfPageImage(pageAsPng, questionnaireType, additionalInformation);
             result.AddRange(pageQuestions);
             ocrPagesCount++;
 
-            additionalInfo[$"Текст страницы номер {page.Number}"] = pageText;
-            additionalInfo[$"Значение \"Mean Confidence\" для страницы номер {page.Number}"] = pageMeanConfidence.ToString(CultureInfo.InvariantCulture);
+            additionalInformation[$"Текст страницы номер {page.Number}"] = pageText;
+            additionalInformation[$"Значение \"Mean Confidence\" для страницы номер {page.Number}"] = pageMeanConfidence.ToString(CultureInfo.InvariantCulture);
         }
 
-        additionalInfo["Количество non-searchable страниц"] = ocrPagesCount.ToString();
+        additionalInformation["Количество non-searchable страниц"] = ocrPagesCount.ToString();
 
-        return new Questionnaire(filePath, questionnaireType, additionalInfo, result);
+        return new Questionnaire(filePath, questionnaireType, additionalInformation, result);
     }
 
     private static bool IsNonSearchablePage(Page page)

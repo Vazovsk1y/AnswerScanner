@@ -7,7 +7,8 @@ public interface IQuestionsExtractor
     IReadOnlyCollection<Question> Extract(
         Tesseract.Page ocrAppliedImage, 
         byte[] sourceImageBytes,
-        AnswerRegionOccupancyDetectionSettings settings);
+        AnswerRegionOccupancyDetectionSettings settings,
+        Dictionary<string, string> additionalInformation);
 }
 
 public record AnswerRegionOccupancyDetectionSettings

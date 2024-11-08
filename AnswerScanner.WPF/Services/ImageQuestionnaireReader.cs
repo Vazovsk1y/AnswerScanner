@@ -13,15 +13,9 @@ internal class ImageQuestionnaireReader : IQuestionnaireReader
     {
         var imageBytes = File.ReadAllBytes(filePath);
         
-        PageSegMode? pageSeqMode = questionnaireType switch
-        {
-            QuestionnaireType.YesNoPossibleAnswers => PageSegMode.SingleBlock,
-            _ => null,
-        };
-
         using var engine = CreateTesseractEngine();
         using var pixImg = Pix.LoadFromMemory(imageBytes);
-        using var ocrAppliedPage = engine.Process(pixImg, pageSeqMode);
+        using var ocrAppliedPage = engine.Process(pixImg, GetPageSeqMode(questionnaireType));
 
         var additionalInformation = new Dictionary<string, string>
         {
@@ -40,23 +34,17 @@ internal class ImageQuestionnaireReader : IQuestionnaireReader
             {
                 YOffset = 27,
                 SizeScaleCoefficient = 1.7,
-            }));
+            }, additionalInformation));
     }
 
-    internal static (string pageText, float pageMeanConfidence, IReadOnlyCollection<Question> pageQuestions) ReadFromPdfPageImage(MemoryStream pdfPageImage, QuestionnaireType questionnaireType)
+    internal static (string pageText, float pageMeanConfidence, IReadOnlyCollection<Question> pageQuestions) ReadFromPdfPageImage(MemoryStream pdfPageImage, QuestionnaireType questionnaireType, Dictionary<string, string> additionalInformation)
     {
         using var engine = CreateTesseractEngine();
         
-        PageSegMode? pageSeqMode = questionnaireType switch
-        {
-            QuestionnaireType.YesNoPossibleAnswers => PageSegMode.SingleBlock,
-            _ => null,
-        };
-
         var imageBytes = GetBytesFromStream(pdfPageImage);
         using var pixImg = Pix.LoadFromMemory(imageBytes);
         
-        using var ocrAppliedPage = engine.Process(pixImg, pageSeqMode);
+        using var ocrAppliedPage = engine.Process(pixImg, GetPageSeqMode(questionnaireType));
 
         var questionsExtractorFactory = App.Services.GetRequiredService<IQuestionsExtractorFactory>();
         var questionsExtractor = questionsExtractorFactory.CreateExtractor(questionnaireType);
@@ -64,7 +52,7 @@ internal class ImageQuestionnaireReader : IQuestionnaireReader
         return (ocrAppliedPage.GetText(), ocrAppliedPage.GetMeanConfidence(), questionsExtractor.Extract(ocrAppliedPage, imageBytes, new AnswerRegionOccupancyDetectionSettings
         {
             YOffset = 20,
-        }));
+        }, additionalInformation));
     }
 
     private static byte[] GetBytesFromStream(Stream stream)
@@ -77,6 +65,16 @@ internal class ImageQuestionnaireReader : IQuestionnaireReader
         using var memoryStream = new MemoryStream(); 
         stream.CopyTo(memoryStream);
         return memoryStream.ToArray();
+    }
+
+    private static PageSegMode? GetPageSeqMode(QuestionnaireType questionnaireType)
+    {
+        return questionnaireType switch
+        {
+            QuestionnaireType.YesNoPossibleAnswers => PageSegMode.SingleBlock,
+            QuestionnaireType.FivePossibleAnswers => null,
+            _ => null,
+        };
     }
 
     private static TesseractEngine CreateTesseractEngine()

@@ -1,5 +1,4 @@
-﻿using System.Text.RegularExpressions;
-using AnswerScanner.WPF.Services.Interfaces;
+﻿using AnswerScanner.WPF.Services.Interfaces;
 using AnswerScanner.WPF.Services.Responses;
 using OpenCvSharp;
 using Tesseract;
@@ -8,9 +7,8 @@ using TesseractRect = Tesseract.Rect;
 
 namespace AnswerScanner.WPF.Services;
 
-internal partial class YesNoPossibleAnswersQuestionsExtractor : IQuestionsExtractor
+internal class YesNoPossibleAnswersQuestionsExtractor : QuestionsExtractorBase, IQuestionsExtractor
 {
-    private const char QuestionEndingSign = ';';
     private static readonly IEnumerable<string> YesKeywordPossibleVariants = ["да", "де"];
     
     private class QuestionPrivate
@@ -30,7 +28,11 @@ internal partial class YesNoPossibleAnswersQuestionsExtractor : IQuestionsExtrac
         public double? NoFillRatio { get; set; }
     }
     
-    public IReadOnlyCollection<Question> Extract(Page ocrAppliedImage, byte[] sourceImageBytes, AnswerRegionOccupancyDetectionSettings settings)
+    public IReadOnlyCollection<Question> Extract(
+        Page ocrAppliedImage, 
+        byte[] sourceImageBytes, 
+        AnswerRegionOccupancyDetectionSettings settings,
+        Dictionary<string, string> additionalInformation)
     {
         using var iterator = ocrAppliedImage.GetIterator();
         iterator.Begin();
@@ -68,7 +70,7 @@ internal partial class YesNoPossibleAnswersQuestionsExtractor : IQuestionsExtrac
                 {
                     QuestionRegion = questionBoundingBox,
                     QuestionNumber = questionNumber,
-                    QuestionText = questionText[..(questionText.IndexOf(QuestionEndingSign) + 1)],
+                    QuestionText = TrimQuestionText(questionText),
                     YesKeywordRegion = yr,
                     NoKeywordRegion = nr
                 });
@@ -116,10 +118,6 @@ internal partial class YesNoPossibleAnswersQuestionsExtractor : IQuestionsExtrac
         }).ToList();
     }
     
-    [GeneratedRegex(@"^(\d+)(?:\.\s+|\s+)(.+)$")]
-    private static partial Regex ContainsQuestion();
-
-    
     private static IEnumerable<QuestionPrivate> FindMissingQuestions(
         TesseractEngine ocrEngine,
         Pix pixSourceImage,
@@ -151,7 +149,7 @@ internal partial class YesNoPossibleAnswersQuestionsExtractor : IQuestionsExtrac
                 {
                     QuestionRegion = questionRegion,
                     QuestionNumber = questionNumber,
-                    QuestionText = questionText[..(questionText.IndexOf(QuestionEndingSign) + 1)],
+                    QuestionText = TrimQuestionText(questionText),
                     YesKeywordRegion = yr,
                     NoKeywordRegion = nr
                 };
@@ -271,5 +269,10 @@ internal partial class YesNoPossibleAnswersQuestionsExtractor : IQuestionsExtrac
         {
             return null;
         }
+    }
+
+    private static string TrimQuestionText(string text)
+    {
+        return text[..(text.IndexOf(QuestionEndingSign) + 1)];
     }
 }
