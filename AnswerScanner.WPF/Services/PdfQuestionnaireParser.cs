@@ -1,7 +1,7 @@
-﻿using System.Globalization;
-using AnswerScanner.WPF.Services.Interfaces;
+﻿using AnswerScanner.WPF.Services.Interfaces;
 using System.IO;
 using AnswerScanner.WPF.Services.Responses;
+using Microsoft.Extensions.DependencyInjection;
 using UglyToad.PdfPig;
 using UglyToad.PdfPig.Content;
 using UglyToad.PdfPig.Graphics.Colors;
@@ -9,9 +9,9 @@ using UglyToad.PdfPig.Rendering.Skia;
 
 namespace AnswerScanner.WPF.Services;
 
-internal class PdfQuestionnaireReader : IQuestionnaireReader
+internal class PdfQuestionnaireParser : IQuestionnaireParser
 {
-    public Questionnaire ReadFromFile(string filePath, QuestionnaireType questionnaireType)
+    public Questionnaire ParseFromFile(string filePath, QuestionnaireType questionnaireType)
     {
         using var pdfDocument = PdfDocument.Open(filePath);
         pdfDocument.AddSkiaPageFactory();
@@ -38,13 +38,18 @@ internal class PdfQuestionnaireReader : IQuestionnaireReader
             
             using var pageAsPng = pdfDocument.GetPageAsPng(page.Number, scale, RGBColor.White, quality);
             pageAsPng.Seek(0, SeekOrigin.Begin);
+            
+            var questionsExtractorFactory = App.Services.GetRequiredService<IQuestionsExtractorFactory>();
+            var questionsExtractor = questionsExtractorFactory.CreateExtractor(questionnaireType);
 
-            var (pageText, pageMeanConfidence, pageQuestions) = ImageQuestionnaireReader.ReadFromPdfPageImage(pageAsPng, questionnaireType, additionalInformation);
-            result.AddRange(pageQuestions);
+            var questionsExtractionResult = questionsExtractor.ExtractFromImage(GetBytesFromStream(pageAsPng));
+
+            // TODO: Refactor.
+            additionalInformation[$"Страница {page.Number}"] = string.Join($"{new string('-', 80)}\n",
+                questionsExtractionResult.AdditionalInformation.Select(e => $"{e.Key}:\n{e.Value}\n"));
+            
+            result.AddRange(questionsExtractionResult.Questions);
             ocrPagesCount++;
-
-            additionalInformation[$"Текст страницы номер {page.Number}"] = pageText;
-            additionalInformation[$"Значение \"Mean Confidence\" для страницы номер {page.Number}"] = pageMeanConfidence.ToString(CultureInfo.InvariantCulture);
         }
 
         additionalInformation["Количество non-searchable страниц"] = ocrPagesCount.ToString();
@@ -55,5 +60,17 @@ internal class PdfQuestionnaireReader : IQuestionnaireReader
     private static bool IsNonSearchablePage(Page page)
     {
         return string.IsNullOrWhiteSpace(page.Text) && page.NumberOfImages == 1;
+    }
+    
+    private static byte[] GetBytesFromStream(Stream stream)
+    {
+        if (stream is MemoryStream ms)
+        {
+            return ms.ToArray();
+        }
+
+        using var memoryStream = new MemoryStream(); 
+        stream.CopyTo(memoryStream);
+        return memoryStream.ToArray();
     }
 }

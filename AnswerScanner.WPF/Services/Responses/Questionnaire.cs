@@ -11,8 +11,8 @@ public record Questionnaire(
 public enum QuestionnaireType
 {
     [Display(Name = "Варианты ответа \"Да\" и \"Нет\"")]
-    YesNoPossibleAnswers,
+    YesNoAnswerOptions,
     
-    [Display(Name = "5 возможных вариантов ответа")]
-    FivePossibleAnswers,
+    [Display(Name = "5 вариантов ответа")]
+    FiveAnswerOptions,
 }

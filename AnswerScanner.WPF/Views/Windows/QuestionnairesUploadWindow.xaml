@@ -33,7 +33,7 @@
 
             <StackPanel Margin="5,0,10,0">
                 <StackPanel HorizontalAlignment="Left">
-                    <TextBlock FontSize="16" Text="Тип опросника по умолчанию:" />
+                    <TextBlock FontSize="16" Text="Тип опросников:" />
                     <ComboBox
                         MinWidth="215"
                         Margin="0,7,0,0"
@@ -43,6 +43,7 @@
                         SelectedItem="{Binding SelectedQuestionnaireType}" />
                 </StackPanel>
                 <Button
+                    Padding="3"
                     Margin="0,10,0,0"
                     HorizontalAlignment="Left"
                     Background="Transparent"
@@ -92,7 +93,7 @@
                         <CollectionViewSource x:Key="AvailableQuestionnaireTypes" Source="{x:Static viewmodels:QuestionnairesUploadViewModel.AvailableQuestionnaireTypes}"/>
                     </DataGrid.Resources>
                     <DataGrid.Columns>
-                        <DataGridTextColumn Binding="{Binding FullName}" Header="Полный путь" />
+                        <DataGridTextColumn Binding="{Binding}" Header="Полный путь" />
                         <DataGridComboBoxColumn
                             MaxWidth="250"
                             Header="Тип опросника"

@@ -1,5 +1,4 @@
-﻿using System.IO;
-using AnswerScanner.WPF.Extensions;
+﻿using AnswerScanner.WPF.Extensions;
 using AnswerScanner.WPF.Infrastructure;
 using AnswerScanner.WPF.Services.Interfaces;
 using AnswerScanner.WPF.Services.Responses;
@@ -18,7 +17,7 @@ public partial class QuestionnairesUploadViewModel : ObservableRecipient
         .Select(e => new EnumViewModel<QuestionnaireType>(e));
     
     [ObservableProperty]
-    private IEnumerable<FileInfo> _selectedFiles = [];
+    private IEnumerable<string> _selectedFiles = [];
 
     [ObservableProperty]
     private EnumViewModel<QuestionnaireType> _selectedQuestionnaireType = AvailableQuestionnaireTypes.First();
@@ -38,7 +37,7 @@ public partial class QuestionnairesUploadViewModel : ObservableRecipient
         };
 
         fileDialog.ShowDialog();
-        SelectedFiles = fileDialog.FileNames.Select(e => new FileInfo(e));
+        SelectedFiles = fileDialog.FileNames;
     }
 
     [RelayCommand]
@@ -56,7 +55,7 @@ public partial class QuestionnairesUploadViewModel : ObservableRecipient
             .Select(e =>
             {
                 var reader = factory.CreateReader(e);
-                return reader.ReadFromFile(e.FullName, SelectedQuestionnaireType.Value);
+                return reader.ReadFromFile(e, SelectedQuestionnaireType.Value);
             });
 
         Messenger.Send(new QuestionnairesReadMessage(results.Select(e => e.ToViewModel())));

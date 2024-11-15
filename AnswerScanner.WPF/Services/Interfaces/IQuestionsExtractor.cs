@@ -4,22 +4,9 @@ namespace AnswerScanner.WPF.Services.Interfaces;
 
 public interface IQuestionsExtractor
 {
-    IReadOnlyCollection<Question> Extract(
-        Tesseract.Page ocrAppliedImage, 
-        byte[] sourceImageBytes,
-        AnswerRegionOccupancyDetectionSettings settings,
-        Dictionary<string, string> additionalInformation);
+    QuestionsExtractionResult ExtractFromImage(byte[] imageBytes);
 }
 
-public record AnswerRegionOccupancyDetectionSettings
-{
-    public static readonly AnswerRegionOccupancyDetectionSettings Default = new();
-    
-    public double ThresholdValue { get; init; } = 174;
-
-    public int YOffset { get; init; } = 20;
-    
-    public int XOffset { get; init; } = 3;
-
-    public double SizeScaleCoefficient { get; init; } = 1.5;
-}
+public record QuestionsExtractionResult(
+    IReadOnlyCollection<Question> Questions, 
+    IReadOnlyDictionary<string, string> AdditionalInformation);

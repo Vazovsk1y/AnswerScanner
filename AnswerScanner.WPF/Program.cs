@@ -65,12 +65,13 @@ internal class Program
         collection.AddSingleton<MainWindow>();
         collection.AddSingleton<MainWindowViewModel>();
 
-        collection.AddSingleton<IQuestionnaireReaderFactory, QuestionnaireReaderFactory>();
-        collection.AddTransient<PdfQuestionnaireReader>();
-        collection.AddTransient<ImageQuestionnaireReader>();
+        collection.AddSingleton<IQuestionnaireParserFactory, QuestionnaireParserFactory>();
+        collection.AddTransient<PdfQuestionnaireParser>();
+        collection.AddTransient<SimpleImageQuestionnaireParser>();
 
         collection.AddSingleton<IQuestionsExtractorFactory, QuestionsExtractorFactory>();
-        collection.AddTransient<YesNoPossibleAnswersQuestionsExtractor>();
+        collection.AddTransient<YesNoAnswerOptionsQuestionsExtractor>();
+        collection.AddTransient<FiveAnswerOptionsQuestionsExtractor>();
 
         collection.AddTransient<QuestionnairesUploadWindow>();
         collection.AddScoped<QuestionnairesUploadViewModel>();
