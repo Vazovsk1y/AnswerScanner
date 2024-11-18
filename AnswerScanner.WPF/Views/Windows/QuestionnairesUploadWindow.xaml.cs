@@ -8,11 +8,4 @@ public partial class QuestionnairesUploadWindow : Window
     {
         InitializeComponent();
     }
-
-    private void OnCancelButtonClick(object sender, RoutedEventArgs e)
-    {
-        // TODO: Migrate to MVVM.
-        
-        Close();
-    }
 }

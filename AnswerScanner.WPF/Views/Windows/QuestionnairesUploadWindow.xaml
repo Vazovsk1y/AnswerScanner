@@ -4,16 +4,27 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:b="clr-namespace:Microsoft.Xaml.Behaviors;assembly=Microsoft.Xaml.Behaviors"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:viewmodels="clr-namespace:AnswerScanner.WPF.ViewModels"
+    xmlns:infr="clr-namespace:AnswerScanner.WPF.Infrastructure"
     x:Name="Window"
     Title="Загрузить"
-    Width="800"
+    Width="900"
     Height="600"
     FontFamily="Roboto"
     d:DataContext="{d:DesignInstance Type=viewmodels:QuestionnairesUploadViewModel}"
     ResizeMode="NoResize"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
+    <i:Interaction.Triggers>
+        <b:EventTrigger EventName="Closed">
+            <i:InvokeCommandAction Command="{Binding WindowClosedCommand}" />
+        </b:EventTrigger>
+    </i:Interaction.Triggers>
+    <Window.Resources>
+        <infr:BoolVisibilityConverter x:Key="BoolVisibilityConverter"></infr:BoolVisibilityConverter>
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -93,37 +104,65 @@
                         <CollectionViewSource x:Key="AvailableQuestionnaireTypes" Source="{x:Static viewmodels:QuestionnairesUploadViewModel.AvailableQuestionnaireTypes}"/>
                     </DataGrid.Resources>
                     <DataGrid.Columns>
-                        <DataGridTextColumn Binding="{Binding}" Header="Полный путь" />
+                        <DataGridTextColumn IsReadOnly="True" 
+                                            Binding="{Binding FilePath}" 
+                                            Header="Файл" />
+                        
+                        <!-- TODO: Change to readonly when uploading started. -->
                         <DataGridComboBoxColumn
                             MaxWidth="250"
                             Header="Тип опросника"
                             ItemsSource="{Binding Source={StaticResource AvailableQuestionnaireTypes}}"
-                            SelectedItemBinding="{Binding DataContext.SelectedQuestionnaireType, RelativeSource={RelativeSource AncestorType=Window}}"
-                            DisplayMemberPath="DisplayTitle"
-                            IsReadOnly="True"/>
+                            SelectedItemBinding="{Binding SelectedQuestionnaireType}"
+                            DisplayMemberPath="DisplayTitle">
+                        </DataGridComboBoxColumn>
+                        
+                        <DataGridCheckBoxColumn Header="Статус"
+                                                MaxWidth="100"
+                                                IsReadOnly="True"
+                                                Binding="{Binding IsProcessed}"/>
                     </DataGrid.Columns>
                 </DataGrid>
             </StackPanel>
         </StackPanel>
 
+        <Grid Grid.Row="1" Margin="10,15,10,8">
+            <StackPanel Visibility="{Binding IsUploadingStarted, Converter={StaticResource BoolVisibilityConverter}}" 
+                        HorizontalAlignment="Left" 
+                        Orientation="Horizontal">
+                <StackPanel.Resources>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Margin" Value="5, 5, 0, 0"/>
+                        <Setter Property="FontSize" Value="14"/>
+                    </Style>
+                </StackPanel.Resources>
+                <ProgressBar MinWidth="150" 
+                             Maximum="{Binding MaxProgress}" 
+                             Value="{Binding Progress}"/>
+                <TextBlock Text="Загружено"/>
+                <TextBlock Text="{Binding Progress}"/>
+                <TextBlock Text="из"/>
+                <TextBlock Text="{Binding MaxProgress}"/>
+            </StackPanel>
+            
+            <StackPanel
+                HorizontalAlignment="Right"
+                Orientation="Horizontal">
+                <StackPanel.Resources>
+                    <Style TargetType="Button">
+                        <Setter Property="MinWidth" Value="130" />
+                        <Setter Property="FontSize" Value="16" />
+                    </Style>
+                </StackPanel.Resources>
+                <Button
+                    Margin="0,0,10,0"
+                    Command="{Binding ConfirmCommand}"
+                    Content="Подтвердить"
+                    CommandParameter="{Binding ElementName=Window}"/>
+                <Button Content="Отмена" Command="{Binding CancelCommand}"/>
+            </StackPanel>
+        </Grid>
 
-        <StackPanel
-            Grid.Row="1"
-            Margin="0,15,10,8"
-            HorizontalAlignment="Right"
-            Orientation="Horizontal">
-            <StackPanel.Resources>
-                <Style TargetType="Button">
-                    <Setter Property="MinWidth" Value="130" />
-                    <Setter Property="FontSize" Value="16" />
-                </Style>
-            </StackPanel.Resources>
-            <Button
-                Margin="0,0,10,0"
-                Command="{Binding ConfirmCommand}"
-                Content="Подтвердить"
-                CommandParameter="{Binding ElementName=Window}"/>
-            <Button Click="OnCancelButtonClick" Content="Отмена" />
-        </StackPanel>
+        
     </Grid>
 </Window>
