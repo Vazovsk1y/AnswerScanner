@@ -42,7 +42,7 @@
                 Margin="0,5,5,10"
                 Fill="Black" />
 
-            <StackPanel Margin="5,0,10,0">
+            <StackPanel Margin="5,0,10,0" IsEnabled="{Binding IsEditable}">
                 <StackPanel HorizontalAlignment="Left">
                     <TextBlock FontSize="16" Text="Тип опросников:" />
                     <ComboBox
@@ -51,7 +51,7 @@
                         DisplayMemberPath="DisplayTitle"
                         FontSize="14"
                         ItemsSource="{x:Static viewmodels:QuestionnairesUploadViewModel.AvailableQuestionnaireTypes}"
-                        SelectedItem="{Binding SelectedQuestionnaireType}" />
+                        SelectedItem="{Binding SelectedQuestionnaireType}"/>
                 </StackPanel>
                 <Button
                     Padding="3"
@@ -127,7 +127,7 @@
         </StackPanel>
 
         <Grid Grid.Row="1" Margin="10,15,10,8">
-            <StackPanel Visibility="{Binding IsUploadingStarted, Converter={StaticResource BoolVisibilityConverter}}" 
+            <StackPanel Visibility="{Binding IsUploadingRunning, Converter={StaticResource BoolVisibilityConverter}}" 
                         HorizontalAlignment="Left" 
                         Orientation="Horizontal">
                 <StackPanel.Resources>

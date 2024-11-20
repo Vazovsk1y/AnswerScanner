@@ -4,5 +4,5 @@ namespace AnswerScanner.WPF.Services.Interfaces;
 
 public interface IQuestionnaireParser
 {
-    Questionnaire ParseFromFile(string filePath, QuestionnaireType questionnaireType);
+    Questionnaire ParseFromFile(byte[] fileBytes, QuestionnaireType questionnaireType);
 }

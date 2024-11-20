@@ -5,10 +5,10 @@ namespace AnswerScanner.WPF.Extensions;
 
 public static class Mapper
 {
-    public static QuestionnaireViewModel ToViewModel(this Questionnaire questionnaire)
+    public static QuestionnaireViewModel ToViewModel(this Questionnaire questionnaire, string filePath)
     {
         return new QuestionnaireViewModel(
-            questionnaire.FilePath,
+            filePath,
             questionnaire.Type.ToViewModel(),
             questionnaire.AdditionalInformation.Select(e => new AdditionalInformationItem(e.Key, e.Value)),
             questionnaire.Questions.Select(e => e.ToViewModel()).ToList()

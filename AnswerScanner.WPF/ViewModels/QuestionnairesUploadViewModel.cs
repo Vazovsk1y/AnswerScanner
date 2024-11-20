@@ -1,4 +1,6 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Concurrent;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Windows;
 using AnswerScanner.WPF.Extensions;
 using AnswerScanner.WPF.Infrastructure;
@@ -16,26 +18,37 @@ public partial class QuestionnairesUploadViewModel : ObservableRecipient
     public static readonly IEnumerable<EnumViewModel<QuestionnaireType>> AvailableQuestionnaireTypes = Enum
         .GetValues<QuestionnaireType>()
         .Select(e => new EnumViewModel<QuestionnaireType>(e));
+    
+    private readonly object _filesParsingCtsLock = new();
 
     public ObservableCollection<SelectedFileViewModel> SelectedFiles { get; } = [];
 
     [ObservableProperty]
     private EnumViewModel<QuestionnaireType> _selectedQuestionnaireType = AvailableQuestionnaireTypes.First();
 
-    [ObservableProperty]
+    [ObservableProperty] 
     [NotifyCanExecuteChangedFor(nameof(CancelCommand))]
-    private bool _isUploadingStarted;
-
-    [ObservableProperty]
-    private int _progress;
+    [NotifyPropertyChangedFor(nameof(IsEditable))]
+    private bool _isUploadingRunning;
     
-    [ObservableProperty]
+    public bool IsEditable => !IsUploadingRunning;
+
+    [ObservableProperty] 
+    private int _progress;
+
+    [ObservableProperty] 
     private int _maxProgress;
     
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(CancelCommand))]
+    private bool _isCancellingRunning;
+    
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(CancelCommand))]
+    private bool _isCancellingEnabled;
+
     private CancellationTokenSource? _filesParsingCts;
-    
-    private readonly object _filesParsingCtsLock = new();
-    
+
     private bool _dialogClosed;
 
     [RelayCommand]
@@ -53,7 +66,7 @@ public partial class QuestionnairesUploadViewModel : ObservableRecipient
         };
 
         fileDialog.ShowDialog();
-        
+
         SelectedFiles.Clear();
         foreach (var file in fileDialog.FileNames)
         {
@@ -69,94 +82,122 @@ public partial class QuestionnairesUploadViewModel : ObservableRecipient
     [RelayCommand]
     private async Task Confirm(Window window) // TODO: Migrate to MVVM.
     {
-        if (SelectedFiles.Count == 0 || ConfirmCommand.IsRunning)
+        if (SelectedFiles.Count == 0 ||
+            ConfirmCommand.IsRunning ||
+            IsUploadingRunning)
         {
             return;
         }
-        
-        _filesParsingCts = new CancellationTokenSource();
-        
-        using var scope = App.Services.CreateScope();
-        var factory = scope.ServiceProvider.GetRequiredService<IQuestionnaireParserFactory>();
 
         Progress = 0;
         MaxProgress = SelectedFiles.Count;
-        IsUploadingStarted = true;
-
-        var results = await Task.Run(() =>
+        IsUploadingRunning = true;
+        IsCancellingEnabled = true;
+        
+        var factory = App.Services.GetRequiredService<IQuestionnaireParserFactory>();
+        
+        _filesParsingCts = new CancellationTokenSource();
+        var parallelOptions = new ParallelOptions
         {
-            try
+            MaxDegreeOfParallelism = Environment.ProcessorCount - 1, 
+            CancellationToken = _filesParsingCts.Token
+        };
+
+        var chunkSize = SelectedFiles.Count / 2;
+        var chunks = SelectedFiles
+            .OrderBy(_ => Guid.NewGuid())
+            .Chunk(chunkSize)
+            .ToList();
+        
+        var results = new ConcurrentBag<QuestionnaireViewModel>();
+        try
+        {
+            await Task.Run(async () =>
             {
-                return SelectedFiles
-                    .AsParallel()
-                    // https://dotnettutorials.net/lesson/maximum-degree-of-parallelism-in-csharp/#:~:text=So%2C%20in%20order%20to%20use,threads%20to%20execute%20the%20code.
-                    .WithDegreeOfParallelism(Environment.ProcessorCount - 1)
-                    .WithCancellation(_filesParsingCts.Token)
-                    .Select(e =>
+                var chunkFiles = new List<(SelectedFileViewModel selectedFile, byte[] fileBytes)>();
+
+                for (var i = 0; i < chunks.Count; i++)
+                {
+                    parallelOptions.CancellationToken.ThrowIfCancellationRequested();
+                    
+                    var isNotLastChunk = i != chunks.Count - 1;
+                    Application.Current?.Dispatcher.Invoke(() => IsCancellingEnabled = isNotLastChunk);
+                    
+                    chunkFiles.Clear();
+                    foreach (var chunkItem in chunks[i])
                     {
-                        var parser = factory.CreateParser(e.FilePath);
-                        var result = parser.ParseFromFile(e.FilePath, SelectedQuestionnaireType.Value);
-                        
+                        var bytes = await File.ReadAllBytesAsync(chunkItem.FilePath, parallelOptions.CancellationToken);
+                        chunkFiles.Add((chunkItem, bytes));
+                    }
+
+                    await Parallel.ForEachAsync(chunkFiles, parallelOptions, (item, _) =>
+                    {
+                        var parser = factory.CreateParser(item.selectedFile.FilePath);
+                        var result = parser.ParseFromFile(item.fileBytes, SelectedQuestionnaireType.Value);
+
                         Application.Current?.Dispatcher.Invoke(() =>
                         {
                             lock (_filesParsingCtsLock)
                             {
-                                if (!IsUploadingStarted)
+                                if (!IsUploadingRunning)
                                 {
                                     return;
                                 }
-                                
+
                                 Progress = ++Progress;
-                                e.IsProcessed = true;
+                                item.selectedFile.IsProcessed = true;
                             }
                         });
-                        
-                        return result.ToViewModel();
-                    })
-                    .ToList();
-            }
-            catch (OperationCanceledException)
-            {
-                Application.Current?.Dispatcher.Invoke(() =>
-                {
-                    Progress = 0;
-                    MaxProgress = 0;
-                    IsUploadingStarted = false;
-                    foreach (var item in SelectedFiles)
-                    {
-                        item.IsProcessed = false;
-                    }
-                });
 
-                if (!_dialogClosed)
-                {
-                    MessageBox.Show("Загрузка файлов отменена.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        results.Add(result.ToViewModel(item.selectedFile.FilePath));
+                        return ValueTask.CompletedTask;
+                    });
                 }
-                return null;
-            }
-            finally
-            {
-                _filesParsingCts.Dispose();
-                _filesParsingCts = null;
-            }
-        });
-
-        if (results is not null)
-        {
+            }, parallelOptions.CancellationToken);
+            
             MessageBox.Show("Все файлы успешно загружены.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             Messenger.Send(new QuestionnairesReadMessage(results));
+        
             window.Close();
+        }
+        catch (OperationCanceledException)
+        {
+            Application.Current?.Dispatcher.Invoke(() =>
+            {
+                Progress = 0;
+                MaxProgress = 0;
+                foreach (var item in SelectedFiles)
+                {
+                    item.IsProcessed = false;
+                }
+                
+                IsCancellingRunning = false;
+                IsUploadingRunning = false;
+            });
+            
+            if (!_dialogClosed)
+            {
+                MessageBox.Show("Загрузка файлов отменена.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+        finally
+        {
+            _filesParsingCts.Dispose();
+            _filesParsingCts = null;
         }
     }
 
     [RelayCommand(CanExecute = nameof(CanCancel))]
     private void Cancel()
     {
-        IsUploadingStarted = false;
+        IsCancellingEnabled = false;
+        IsCancellingRunning = true;
         _filesParsingCts?.Cancel();
     }
 
-    private bool CanCancel() => IsUploadingStarted;
+    private bool CanCancel() => IsUploadingRunning && 
+                                !IsCancellingRunning && 
+                                IsCancellingEnabled;
 
     partial void OnSelectedQuestionnaireTypeChanged(EnumViewModel<QuestionnaireType> value)
     {
@@ -169,6 +210,8 @@ public partial class QuestionnairesUploadViewModel : ObservableRecipient
     [RelayCommand]
     private void WindowClosed()
     {
+        IsCancellingEnabled = false;
+        IsCancellingRunning = true;
         _filesParsingCts?.Cancel();
         _dialogClosed = true;
     }

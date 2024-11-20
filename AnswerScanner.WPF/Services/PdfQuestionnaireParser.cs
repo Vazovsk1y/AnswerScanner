@@ -11,9 +11,9 @@ namespace AnswerScanner.WPF.Services;
 
 internal class PdfQuestionnaireParser : IQuestionnaireParser
 {
-    public Questionnaire ParseFromFile(string filePath, QuestionnaireType questionnaireType)
+    public Questionnaire ParseFromFile(byte[] fileBytes, QuestionnaireType questionnaireType)
     {
-        using var pdfDocument = PdfDocument.Open(filePath);
+        using var pdfDocument = PdfDocument.Open(fileBytes);
         pdfDocument.AddSkiaPageFactory();
 
         var result = new List<Question>();
@@ -54,7 +54,7 @@ internal class PdfQuestionnaireParser : IQuestionnaireParser
 
         additionalInformation["Количество non-searchable страниц"] = ocrPagesCount.ToString();
 
-        return new Questionnaire(filePath, questionnaireType, additionalInformation, result);
+        return new Questionnaire(questionnaireType, additionalInformation, result);
     }
 
     private static bool IsNonSearchablePage(Page page)

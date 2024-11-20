@@ -1,7 +1,6 @@
 ﻿using AnswerScanner.WPF.ViewModels;
 using AnswerScanner.WPF.Views.Windows;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using System.Windows;
 
 namespace AnswerScanner.WPF;
@@ -13,14 +12,12 @@ public partial class App : Application
 {
     public const string Title = "AnswerScanner";
 
-    private static readonly IHost _host;
-
     public static IServiceProvider Services { get; }
 
     static App()
     {
-        _host = Program.CreateHostBuilder(Environment.GetCommandLineArgs()).Build();
-        Services = _host.Services;
+        var host = Program.CreateHostBuilder(Environment.GetCommandLineArgs()).Build();
+        Services = host.Services;
     }
 
     protected override void OnStartup(StartupEventArgs e)

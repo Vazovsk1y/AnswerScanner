@@ -3,7 +3,6 @@
 namespace AnswerScanner.WPF.Services.Responses;
 
 public record Questionnaire(
-    string? FilePath,
     QuestionnaireType Type,
     IReadOnlyDictionary<string, string> AdditionalInformation,
     IReadOnlyCollection<Question> Questions);
