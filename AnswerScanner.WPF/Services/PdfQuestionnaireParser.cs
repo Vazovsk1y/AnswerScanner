@@ -59,7 +59,7 @@ internal class PdfQuestionnaireParser : IQuestionnaireParser
 
     private static bool IsNonSearchablePage(Page page)
     {
-        return string.IsNullOrWhiteSpace(page.Text) && page.NumberOfImages == 1;
+        return string.IsNullOrWhiteSpace(page.Text);
     }
     
     private static byte[] GetBytesFromStream(Stream stream)

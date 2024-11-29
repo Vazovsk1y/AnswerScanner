@@ -13,7 +13,7 @@ internal partial class MainWindowViewModel :
     IRecipient<QuestionnairesReadMessage>
 {
     [ObservableProperty]
-    private IEnumerable<QuestionnaireViewModel>? _uploadedQuestionnaires;
+    private IReadOnlyCollection<QuestionnaireViewModel>? _uploadedQuestionnaires;
 
     [ObservableProperty]
     private QuestionnaireViewModel? _selectedQuestionnaire;
@@ -26,9 +26,22 @@ internal partial class MainWindowViewModel :
     [RelayCommand]
     private static void UploadQuestionnaires()
     {
-        using var scope = App.Services.CreateScope();
+        using var scope = App.Services.CreateScope(); 
         var window = scope.ServiceProvider.GetRequiredService<QuestionnairesUploadWindow>();
         var viewModel = scope.ServiceProvider.GetRequiredService<QuestionnairesUploadViewModel>();
+
+        // TODO: Migrate to MVVM.
+        
+        window.DataContext = viewModel;
+        window.ShowDialog();
+    }
+    
+    [RelayCommand]
+    private static void ExportQuestionnaires()
+    {
+        using var scope = App.Services.CreateScope(); 
+        var window = scope.ServiceProvider.GetRequiredService<QuestionnairesExportWindow>();
+        var viewModel = scope.ServiceProvider.GetRequiredService<QuestionnairesExportViewModel>();
 
         // TODO: Migrate to MVVM.
         

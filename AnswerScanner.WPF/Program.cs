@@ -38,7 +38,7 @@ internal class Program
         try
         {
             App app = new();
-            // app.InitializeComponent();
+            app.InitializeComponent();
             app.Run();
         }
         catch (Exception ex)
@@ -74,7 +74,13 @@ internal class Program
         collection.AddTransient<FiveAnswerOptionsQuestionsExtractor>();
 
         collection.AddTransient<QuestionnairesUploadWindow>();
-        collection.AddScoped<QuestionnairesUploadViewModel>();
+        collection.AddTransient<QuestionnairesUploadViewModel>();
+        
+        collection.AddSingleton<IQuestionnaireFileExporterFactory, QuestionnaireFileExporterFactory>();
+        collection.AddTransient<QuestionnaireXlsxFileExporter>();
+
+        collection.AddTransient<QuestionnairesExportWindow>();
+        collection.AddTransient<QuestionnairesExportViewModel>();
     }
 
     private static LoggerConfiguration GetLoggerConfiguration()

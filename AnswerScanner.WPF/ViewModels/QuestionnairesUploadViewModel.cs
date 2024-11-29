@@ -17,7 +17,8 @@ public partial class QuestionnairesUploadViewModel : ObservableRecipient
 {
     public static readonly IEnumerable<EnumViewModel<QuestionnaireType>> AvailableQuestionnaireTypes = Enum
         .GetValues<QuestionnaireType>()
-        .Select(e => new EnumViewModel<QuestionnaireType>(e));
+        .Select(e => new EnumViewModel<QuestionnaireType>(e))
+        .ToList();
     
     private readonly object _filesParsingCtsLock = new();
 
@@ -48,8 +49,6 @@ public partial class QuestionnairesUploadViewModel : ObservableRecipient
     private bool _isCancellingEnabled;
 
     private CancellationTokenSource? _filesParsingCts;
-
-    private bool _dialogClosed;
 
     [RelayCommand]
     private void SelectFiles()
@@ -103,7 +102,7 @@ public partial class QuestionnairesUploadViewModel : ObservableRecipient
             CancellationToken = _filesParsingCts.Token
         };
 
-        var chunkSize = SelectedFiles.Count / 2;
+        var chunkSize = SelectedFiles.Count == 1 ? SelectedFiles.Count : SelectedFiles.Count / 2;
         var chunks = SelectedFiles
             .OrderBy(_ => Guid.NewGuid())
             .Chunk(chunkSize)
@@ -115,6 +114,7 @@ public partial class QuestionnairesUploadViewModel : ObservableRecipient
             await Task.Run(async () =>
             {
                 var chunkFiles = new List<(SelectedFileViewModel selectedFile, byte[] fileBytes)>();
+                var questionnaireIndex = 0;
 
                 for (var i = 0; i < chunks.Count; i++)
                 {
@@ -149,7 +149,8 @@ public partial class QuestionnairesUploadViewModel : ObservableRecipient
                             }
                         });
 
-                        results.Add(result.ToViewModel(item.selectedFile.FilePath));
+                        Interlocked.Increment(ref questionnaireIndex);
+                        results.Add(result.ToViewModel(item.selectedFile.FilePath, $"Опросник {questionnaireIndex}"));
                         return ValueTask.CompletedTask;
                     });
                 }
@@ -174,11 +175,6 @@ public partial class QuestionnairesUploadViewModel : ObservableRecipient
                 IsCancellingRunning = false;
                 IsUploadingRunning = false;
             });
-            
-            if (!_dialogClosed)
-            {
-                MessageBox.Show("Загрузка файлов отменена.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
         }
         finally
         {
@@ -206,13 +202,15 @@ public partial class QuestionnairesUploadViewModel : ObservableRecipient
             item.SelectedQuestionnaireType = value;
         }
     }
+}
 
-    [RelayCommand]
-    private void WindowClosed()
-    {
-        IsCancellingEnabled = false;
-        IsCancellingRunning = true;
-        _filesParsingCts?.Cancel();
-        _dialogClosed = true;
-    }
+public partial class SelectedFileViewModel : ObservableObject
+{
+    public required string FilePath { get; init; }
+    
+    [ObservableProperty]
+    private EnumViewModel<QuestionnaireType> _selectedQuestionnaireType = QuestionnairesUploadViewModel.AvailableQuestionnaireTypes.First();
+
+    [ObservableProperty]
+    private bool _isProcessed;
 }

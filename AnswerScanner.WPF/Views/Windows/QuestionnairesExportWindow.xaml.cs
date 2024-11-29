@@ -3,9 +3,9 @@ using System.Windows.Input;
 
 namespace AnswerScanner.WPF.Views.Windows;
 
-public partial class QuestionnairesUploadWindow : Window
+public partial class QuestionnairesExportWindow : Window
 {
-    public QuestionnairesUploadWindow()
+    public QuestionnairesExportWindow()
     {
         InitializeComponent();
     }

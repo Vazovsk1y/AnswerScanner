@@ -1,0 +1,149 @@
+﻿<Window x:Class="AnswerScanner.WPF.Views.Windows.QuestionnairesExportWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:vms="clr-namespace:AnswerScanner.WPF.ViewModels"
+        WindowStartupLocation="CenterScreen"
+        d:DataContext="{d:DesignInstance Type=vms:QuestionnairesExportViewModel}"
+        Height="550"
+        Width="1000"
+        WindowStyle="None"
+        MouseDown="StartWindowMoving"
+        Style="{StaticResource DialogWindowStyle}"
+        mc:Ignorable="d">
+    <WindowChrome.WindowChrome>
+        <WindowChrome CornerRadius="0"
+                      CaptionHeight="0"
+                      GlassFrameThickness="0" />
+    </WindowChrome.WindowChrome>
+    
+    <Grid Background="{StaticResource MainWindowBackgroundBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid Background="{StaticResource HeaderBackgroundBrush}"
+              MinHeight="40">
+            <StackPanel HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal"
+                        Margin="10, 0, 0, 0">
+                <Image Source="{StaticResource Logo}"
+                       Width="25"
+                       Height="25" />
+                <TextBlock
+                    Margin="10, 0, 0, 0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Foreground="{StaticResource DefaultForegroundBrush}"
+                    FontSize="18"
+                    FontWeight="600"
+                    Text="Окно экспорта опросников" />
+            </StackPanel>
+
+            <Button Style="{StaticResource CloseWindowButtonStyle}"
+                    HorizontalAlignment="Right" />
+        </Grid>
+
+        <StackPanel Grid.Row="1" Margin="5,5,0,0">
+            <StackPanel.Resources>
+                <Style TargetType="TextBlock">
+                    <Setter Property="Foreground" Value="{StaticResource DefaultForegroundBrush}" />
+                </Style>
+            </StackPanel.Resources>
+
+            <StackPanel Margin="5,0,10,0">
+                <StackPanel HorizontalAlignment="Left">
+                    <TextBlock FontSize="16" Text="Тип экспорта:" />
+                    <ComboBox
+                        Style="{StaticResource DefaultComboBoxStyle}"
+                        MinWidth="250"
+                        MinHeight="40"
+                        Margin="0,7,0,0"
+                        FontSize="14"
+                        ItemsSource="{x:Static vms:QuestionnairesExportViewModel.AvailableQuestionnaireFileExporterTypes}"
+                        SelectedItem="{Binding SelectedQuestionnaireFileExporterType}"
+                        DisplayMemberPath="DisplayName" />
+                </StackPanel>
+
+                <Button
+                    Margin="0,10,0,0"
+                    HorizontalAlignment="Left"
+                    Command="{Binding SelectFileCommand}"
+                    Style="{StaticResource SelectFilesButtonStyle}">
+                    <StackPanel Orientation="Horizontal">
+                        <Image
+                            Width="30"
+                            Height="30"
+                            Source="{StaticResource SelectFilesIcon}"
+                            Stretch="Fill" />
+                        <TextBlock
+                            Margin="7, 0, 0, 0"
+                            VerticalAlignment="Center"
+                            FontSize="16"
+                            Text="{Binding SaveAs, TargetNullValue='Сохранить как'}"
+                            TextDecorations="Underline" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </StackPanel>
+
+        <DataGrid
+            Grid.Row="2"
+            MaxHeight="400"
+            Margin="10,10,10,0"
+            VerticalAlignment="Top"
+            ColumnWidth="*"
+            IsReadOnly="True"
+            Foreground="{StaticResource DefaultForegroundBrush}"
+            FontSize="14"
+            ItemsSource="{Binding Questionnaires}">
+            <DataGrid.Resources>
+            </DataGrid.Resources>
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding FilePath}"
+                                    ElementStyle="{StaticResource TextWrappedTextBlockStyle}"
+                                    MinWidth="300"
+                                    MaxWidth="400"
+                                    Header="Файл" />
+
+                <DataGridTextColumn
+                    MinWidth="200"
+                    MaxWidth="250"
+                    Header="Тип опросника"
+                    ElementStyle="{StaticResource TextCenteredTextBlockStyle}"
+                    Binding="{Binding Type.DisplayName}" />
+
+                <DataGridTextColumn Header="Название"
+                                    MinWidth="200"
+                                    ElementStyle="{StaticResource TextWrappedTextBlockStyle}"
+                                    Binding="{Binding Name}" />
+
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <StackPanel
+            Margin="0,0,10,5"
+            Grid.Row="3"
+            HorizontalAlignment="Right"
+            Orientation="Horizontal">
+            <StackPanel.Resources>
+                <Style TargetType="Button">
+                    <Setter Property="MinWidth" Value="130" />
+                    <Setter Property="FontSize" Value="16" />
+                </Style>
+            </StackPanel.Resources>
+            <Button
+                Command="{Binding ConfirmCommand}"
+                Content="Подтвердить"
+                FontSize="14"
+                Style="{StaticResource ConfirmButtonStyle}"
+                CommandParameter="{Binding ElementName=Window}" />
+        </StackPanel>
+
+    </Grid>
+</Window>

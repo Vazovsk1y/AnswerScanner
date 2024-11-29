@@ -11,7 +11,7 @@ namespace AnswerScanner.WPF.Services;
 
 internal class YesNoAnswerOptionsQuestionsExtractor : QuestionsExtractorBase, IQuestionsExtractor
 {
-    private static readonly IEnumerable<string> YesKeywordPossibleVariants = ["да", "де"];
+    private static readonly IReadOnlyCollection<string> YesKeywordPossibleVariants = ["да", "де"];
     
     public QuestionsExtractionResult ExtractFromImage(byte[] imageBytes)
     {
@@ -152,7 +152,11 @@ internal class YesNoAnswerOptionsQuestionsExtractor : QuestionsExtractorBase, IQ
         var questionEndingSignGone = false;
         while (iterator.Next(PageIteratorLevel.Word))
         {
-            var word = iterator.GetText(PageIteratorLevel.Word).Trim();
+            var word = iterator.GetText(PageIteratorLevel.Word)?.Trim();
+            if (string.IsNullOrWhiteSpace(word))
+            {
+                continue;
+            }
 
             if (word.EndsWith(QuestionEndingSign))
             {

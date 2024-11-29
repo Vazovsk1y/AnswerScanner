@@ -5,7 +5,7 @@ namespace AnswerScanner.WPF.ViewModels;
 
 public record EnumViewModel<T> where T : Enum
 {
-    public string? DisplayTitle { get; }
+    public string DisplayName { get; }
     
     public T Value { get; }
     
@@ -14,6 +14,6 @@ public record EnumViewModel<T> where T : Enum
         Value = value;
         var field = value.GetType().GetField(value.ToString());
         var attribute = field?.GetCustomAttribute<DisplayAttribute>();
-        DisplayTitle = attribute?.Name;
+        DisplayName = attribute?.Name ?? value.ToString();
     }
 }

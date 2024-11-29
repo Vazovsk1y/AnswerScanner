@@ -1,0 +1,22 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
+    <LinearGradientBrush x:Key="HeaderBackgroundBrush" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Color="#313335" Offset="0.5" />
+        <GradientStop Color="#3A3C3E" Offset="0" />
+        <GradientStop Color="#2B2B2B" Offset="2" />
+    </LinearGradientBrush>
+    
+    <SolidColorBrush x:Key="DefaultForegroundBrush">White</SolidColorBrush>
+    
+    <SolidColorBrush x:Key="MainWindowBackgroundBrush">#2B2B2B</SolidColorBrush>
+    
+    <SolidColorBrush x:Key="DefaultIsMouseOverBrush">#4E5355</SolidColorBrush>
+    <SolidColorBrush x:Key="DefaultItemSelectedBrush">#038cfc</SolidColorBrush>
+    
+    <SolidColorBrush x:Key="DataGridColumnHeaderBackgroundBrush">#757575</SolidColorBrush>
+    
+    <SolidColorBrush x:Key="IconBrush">#1e8515</SolidColorBrush>
+    
+    <SolidColorBrush x:Key="DefaultDisabledForegroundBrush">LightGray</SolidColorBrush>
+</ResourceDictionary>

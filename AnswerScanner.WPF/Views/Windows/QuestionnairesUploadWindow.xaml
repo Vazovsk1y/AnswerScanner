@@ -4,165 +4,212 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:b="clr-namespace:Microsoft.Xaml.Behaviors;assembly=Microsoft.Xaml.Behaviors"
-    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:viewmodels="clr-namespace:AnswerScanner.WPF.ViewModels"
     xmlns:infr="clr-namespace:AnswerScanner.WPF.Infrastructure"
+    MouseDown="StartWindowMoving"
     x:Name="Window"
-    Title="Загрузить"
-    Width="900"
+    Width="1000"
     Height="600"
-    FontFamily="Roboto"
+    WindowStyle="None"
+    Style="{StaticResource DialogWindowStyle}"
     d:DataContext="{d:DesignInstance Type=viewmodels:QuestionnairesUploadViewModel}"
-    ResizeMode="NoResize"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
-    <i:Interaction.Triggers>
-        <b:EventTrigger EventName="Closed">
-            <i:InvokeCommandAction Command="{Binding WindowClosedCommand}" />
-        </b:EventTrigger>
-    </i:Interaction.Triggers>
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome CornerRadius="0"
+                      CaptionHeight="0"
+                      GlassFrameThickness="0" />
+    </WindowChrome.WindowChrome>
+
     <Window.Resources>
         <infr:BoolVisibilityConverter x:Key="BoolVisibilityConverter"></infr:BoolVisibilityConverter>
     </Window.Resources>
-    <Grid>
+
+    <Grid Background="{StaticResource MainWindowBackgroundBrush}">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <StackPanel Margin="5,5,0,0">
-            <TextBlock
-                HorizontalAlignment="Center"
-                FontSize="18"
-                FontWeight="SemiBold"
-                Text="Окно загрузки опросников" />
-            <Rectangle
-                Height="3"
-                Margin="0,5,5,10"
-                Fill="Black" />
+        <Grid Background="{StaticResource HeaderBackgroundBrush}"
+              MinHeight="40">
+            <StackPanel HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal"
+                        Margin="10, 0, 0, 0">
+                <Image Source="{StaticResource Logo}"
+                       Width="25"
+                       Height="25" />
+                <TextBlock
+                    Margin="10, 0, 0, 0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Foreground="{StaticResource DefaultForegroundBrush}"
+                    FontSize="18"
+                    FontWeight="600"
+                    Text="Окно загрузки опросников" />
+            </StackPanel>
+
+            <Button Style="{StaticResource CloseWindowButtonStyle}"
+                    HorizontalAlignment="Right"
+                    IsEnabled="{Binding IsEditable}" />
+        </Grid>
+
+        <StackPanel Grid.Row="1" Margin="5, 10, 0, 0">
+            <StackPanel.Resources>
+                <Style TargetType="TextBlock">
+                    <Setter Property="Foreground" Value="{StaticResource DefaultForegroundBrush}" />
+                </Style>
+            </StackPanel.Resources>
 
             <StackPanel Margin="5,0,10,0" IsEnabled="{Binding IsEditable}">
                 <StackPanel HorizontalAlignment="Left">
                     <TextBlock FontSize="16" Text="Тип опросников:" />
                     <ComboBox
-                        MinWidth="215"
-                        Margin="0,7,0,0"
-                        DisplayMemberPath="DisplayTitle"
-                        FontSize="14"
+                        Style="{StaticResource DefaultComboBoxStyle}"
+                        MinWidth="300"
+                        MinHeight="40"
+                        Margin="0,10,0,0"
+                        DisplayMemberPath="DisplayName"
+                        FontSize="16"
                         ItemsSource="{x:Static viewmodels:QuestionnairesUploadViewModel.AvailableQuestionnaireTypes}"
-                        SelectedItem="{Binding SelectedQuestionnaireType}"/>
+                        SelectedItem="{Binding SelectedQuestionnaireType}" />
                 </StackPanel>
                 <Button
-                    Padding="3"
                     Margin="0,10,0,0"
                     HorizontalAlignment="Left"
-                    Background="Transparent"
-                    BorderThickness="0"
+                    Style="{StaticResource SelectFilesButtonStyle}"
                     Command="{Binding SelectFilesCommand}">
                     <StackPanel Orientation="Horizontal">
                         <Image
                             Width="30"
                             Height="30"
+                            Source="{StaticResource SelectFilesIcon}"
                             Stretch="Fill">
-                            <Image.Source>
-                                <DrawingImage>
-                                    <DrawingImage.Drawing>
-                                        <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
-                                            <DrawingGroup.Transform>
-                                                <TranslateTransform X="41.46380615234375" Y="0.5970001220703125" />
-                                            </DrawingGroup.Transform>
-                                            <DrawingGroup Transform="1,0,0,1,72.9381561279297,31.8393707275391">
-                                                <GeometryDrawing Brush="#FF000000" Geometry="F1 M512,512z M0,0z M0,0C0.99377655,-0.01004562 1.9875531,-0.02009125 3.01144409,-0.03044128 4.09566147,-0.03627228 5.17987885,-0.04210327 6.29695129,-0.04811096 7.44375366,-0.05789474 8.59055603,-0.06767853 9.77210999,-0.07775879 13.57049908,-0.10769346 17.36885302,-0.12909282 21.16731262,-0.14796448 22.46528589,-0.1545363 23.76325916,-0.16110813 25.10056496,-0.1678791 30.55739385,-0.19376007 36.01420979,-0.21724757 41.47107983,-0.23237514 49.27292681,-0.25426229 57.07408403,-0.29620451 64.87565535,-0.36581272 71.03513745,-0.4188903 77.19434822,-0.43887231 83.35404396,-0.44757271 85.96749028,-0.45612772 88.5809243,-0.47494663 91.19421959,-0.50431633 94.85661164,-0.54326079 98.51721354,-0.54426032 102.17976379,-0.53639221 103.25386002,-0.55639282 104.32795624,-0.57639343 105.43460083,-0.59700012 112.94736588,-0.52474684 117.28774232,1.42642469 123.06184387,6.16062927 124.01420063,6.89635839 124.01420063,6.89635839 124.98579693,7.64695072 126.70374924,8.97596375 128.38353248,10.3444659 130.06184387,11.72312927 137.35785028,17.63521803 144.69576792,23.54416337 152.34877014,28.99133301 154.49763906,30.70950722 156.14047866,32.30403725 157.97145081,34.3150177 168.40168084,44.88271288 179.28277633,45.64225995 193.33452988,45.74803734 197.5353187,45.75017908 201.73379987,45.68664829 205.93387747,45.61481643 210.36624341,45.5535478 214.79837411,45.5687373 219.23106384,45.57574463 227.61175495,45.57801336 235.99061439,45.51624268 244.37080491,45.42917567 256.66084634,45.3044821 268.95118547,45.27932126 281.24176216,45.25138569 283.06347286,45.24708385 284.88518345,45.24273642 286.70689392,45.23834229 287.59692584,45.23629345 288.48695776,45.23424461 289.40396035,45.23213369 294.66056247,45.21790563 299.9166803,45.18603198 305.17307734,45.13766038 308.44802568,45.10837264 311.72300256,45.08663479 314.99801445,45.06582642 316.50602054,45.05421909 318.01400437,45.03902341 319.5219326,45.01980019 334.97431748,44.82464364 349.66684166,46.29918558 361.47981262,57.42234802 372.87805253,69.94634002 375.82091892,83.19138085 375.62947083,99.6091156 375.62805732,101.32529661 375.62885823,103.04148064 375.63168335,104.75765991 375.63310711,109.37684843 375.60388759,113.99537639 375.56881356,118.61441255 375.53737499,123.45633662 375.53460561,128.29827891 375.52868652,133.14028931 375.5131992,142.29148701 375.47224049,151.44238299 375.42193907,160.59344834 375.36588578,171.01914352 375.33851904,181.44485377 375.3134619,191.87066233 375.26131959,213.30085668 375.16969236,234.73063788 375.06184387,256.16062927 364.50184387,256.16062927 353.94184387,256.16062927 343.06184387,256.16062927 343.06184387,217.55062927 343.06184387,178.94062927 343.06184387,139.16062927 226.90184387,139.16062927 110.74184387,139.16062927 -8.93815613,139.16062927 -8.83503113,169.00500427 -8.73190613,198.84937927 -8.62565613,229.59812927 -8.60076111,239.01787292 -8.57586609,248.43761658 -8.55021667,258.14280701 -8.5136478,266.59442298 -8.5136478,266.59442298 -8.47314453,275.04602051 -8.45522443,278.80730435 -8.44560535,282.56851065 -8.44104004,286.32983398 -8.43493729,291.13261397 -8.41456065,295.93513726 -8.3839947,300.7378217 -8.3752004,302.4972972 -8.37135515,304.25680634 -8.37311685,306.01630294 -8.86969579,320.37009695 -8.86969579,320.37009695 -2.56315613,332.66062927 2.54881633,335.58175639 7.87939395,335.31183224 13.63552856,335.31884766 14.49734668,335.32378563 15.3591648,335.32872361 16.24709862,335.33381122 19.13366869,335.34916415 22.02021655,335.35754089 24.90681458,335.36595154 26.97649328,335.37553179 29.04617002,335.38554196 31.11584473,335.39595032 36.73519166,335.42298945 42.35454699,335.44400442 47.97392297,335.4639523 53.84627833,335.48581793 59.71860786,335.51320381 65.59094238,335.54000854 76.71137547,335.5899276 87.8318229,335.63486937 98.95228404,335.67803091 111.61239385,335.72740999 124.27247773,335.78232564 136.93256247,335.8377105 162.97563226,335.95151847 189.0187272,336.05816373 215.06184387,336.16062927 215.06184387,346.72062927 215.06184387,357.28062927 215.06184387,368.16062927 186.56741177,368.2532806 158.07301604,368.32463619 129.57846355,368.36787796 116.34752965,368.38849078 103.11669115,368.41658709 89.88581848,368.46238708 78.35190081,368.50229382 66.81805224,368.52807139 55.28406745,368.53698325 49.17861711,368.54219144 43.07336443,368.5544063 36.96797752,368.5835495 31.21669365,368.61077899 25.46568815,368.61905894 19.71434593,368.61306 17.60811346,368.61415686 15.5018713,368.62206553 13.39569473,368.63745117 -3.75269662,368.75653405 -16.07996083,366.44476778 -29.12565613,354.53562927 -38.71795211,344.5604073 -41.24246524,332.52071513 -41.20558167,319.23822021 -41.21011278,318.04014164 -41.21464389,316.84206306 -41.21931231,315.60767907 -41.2297612,312.294527 -41.23128582,308.98159251 -41.22892356,305.66843951 -41.22851454,302.09023343 -41.23956274,298.51205944 -41.2490387,294.93386841 -41.26563195,287.92765822 -41.27114751,280.92148169 -41.27226345,273.9152535 -41.27321484,268.21757775 -41.27732965,262.51991307 -41.2836647,256.82224083 -41.30127349,240.65514685 -41.31050428,224.48807939 -41.30900376,208.32097576 -41.30892384,207.44990956 -41.30884393,206.57884337 -41.3087616,205.68138123 -41.30867984,204.80924672 -41.30859807,203.93711221 -41.30851384,203.03854939 -41.30770131,188.9112285 -41.32683151,174.78401434 -41.35503833,160.65672431 -41.38379696,146.13803784 -41.39757695,131.61940335 -41.39585078,117.10068768 -41.39518785,108.95475742 -41.40063743,100.80893899 -41.42220688,92.66303444 -41.44045806,85.72601828 -41.44473392,78.78916463 -41.43118803,71.8521348 -41.42467778,68.3163955 -41.42447003,64.78096762 -41.44189453,61.24525833 -41.46063557,57.40268196 -41.44801978,53.56055533 -41.43263245,49.71795654 -41.44291957,48.61374668 -41.4532067,47.50953682 -41.46380556,46.37186605 -41.3439202,32.76791045 -36.42086603,22.05480571 -27.43815613,12.03562927 -20.30493838,5.13742064 -9.96028724,0.07937911 0,0z M-3.89909363,35.67625427C-4.59905457,36.5347699 -4.59905457,36.5347699 -5.31315613,37.41062927 -5.7952655,37.97266052 -6.27737488,38.53469177 -6.77409363,39.11375427 -17.8280856,58.55097506 -8.93815613,83.80003245 -8.93815613,106.16062927 107.22184387,106.16062927 223.38184387,106.16062927 343.06184387,106.16062927 343.94933346,94.15741815 343.94933346,94.15741815 339.47590637,83.37937927 334.52829349,78.95366649 330.99833599,78.03611694 324.33229065,78.02932739 323.64454599,78.02721168 322.95680132,78.02509596 322.24821591,78.02291614 319.93835464,78.01691367 317.62854795,78.01791647 315.31867981,78.01878357 313.66459053,78.0157522 312.01050208,78.01223081 310.35641479,78.008255 306.79110877,78.00036335 303.22581278,77.99522006 299.66049957,77.99196434 294.02107682,77.98605588 288.38171724,77.96951668 282.74232483,77.95062256 280.81177906,77.94428506 278.88123325,77.93795943 276.95068741,77.93164539 275.98380949,77.92847958 275.01693158,77.92531377 274.02075434,77.92205203 260.89041911,77.87997446 247.76011312,77.84700309 234.62971497,77.83470154 225.77473912,77.82632025 216.91991946,77.80382645 208.06502175,77.76534587 203.37940793,77.74558644 198.6940276,77.73318024 194.00836945,77.73818016 189.59892293,77.74282796 185.1899188,77.72901407 180.78056145,77.70116806 179.16450642,77.69425834 177.54840564,77.69412739 175.93235207,77.70136833 173.72082161,77.71027461 171.51074445,77.69453683 169.29933167,77.67288208 167.445459,77.66929955 167.445459,77.66929955 165.55413437,77.66564465 159.83141591,76.83809012 155.57095954,73.7540958 151.07356262,70.19969177 150.37642151,69.65280701 149.6792804,69.10592224 148.96101379,68.54246521 147.86623718,67.67283142 147.86623718,67.67283142 146.74934387,66.78562927 145.1556827,65.5329121 143.56193004,64.2803113 141.96809387,63.02781677 141.15727356,62.38811951 140.34645325,61.74842224 139.51106262,61.08934021 135.60389659,58.01252485 131.67652194,54.96183184 127.74934387,51.91062927 127.00499084,51.33159851 126.26063782,50.75256775 125.49372864,50.1559906 119.03504303,45.13336151 112.56250561,40.12885273 106.06184387,35.16062927 105.53891251,34.63229996 105.01598114,34.10397064 104.47720337,33.55963135 100.7220361,31.38459827 97.07907337,31.75134175 92.81452942,31.78831482 91.87909302,31.78466415 90.94365662,31.78101349 89.97987366,31.7772522 86.88591889,31.76914326 83.79248741,31.78276296 80.69856262,31.79734802 78.546285,31.79786672 76.39400689,31.79734865 74.24172974,31.7958374 69.72832679,31.79592715 65.21510236,31.80635947 60.70173645,31.82444763 54.92481555,31.84709386 49.14815646,31.84768647 43.37120342,31.84092999 38.92474047,31.8375826 34.47833684,31.8442353 30.03188515,31.85405922 27.90249251,31.8579013 25.77309325,31.85906356 23.64369774,31.85747337 20.66145218,31.85710115 17.6795376,31.86976834 14.69734192,31.88597107 13.38398613,31.88225494 13.38398613,31.88225494 12.0440979,31.87846375 6.40640696,31.92717256 0.73448918,32.09491935 -3.89909363,35.67625427z" />
-                                            </DrawingGroup>
-                                            <DrawingGroup Transform="1,0,0,1,326,256">
-                                                <GeometryDrawing Brush="#FF000000" Geometry="F1 M512,512z M0,0z M0,0C3.50205702,1.41441104 6.11106147,3.59255123 9,6 10.17066967,6.94680477 11.34265897,7.89197912 12.515625,8.8359375 14.54100527,10.47211413 16.56168927,12.11319823 18.57324219,13.76635742 23.46827041,17.78921144 28.44794681,21.67674625 33.5,25.5 39.76877908,30.24944304 45.90078647,35.13654274 51.98046875,40.125 56.74533388,44.01927091 61.59552633,47.78352491 66.5,51.5 72.83217025,56.29992533 79.03794861,61.22935978 85.18701172,66.26123047 91.15523592,71.14244329 97.20577596,75.91184101 103.28222656,80.65722656 106.19271628,82.93233933 109.09594496,85.2166837 112,87.5 113.16663279,88.41670978 114.33329944,89.33337648 115.5,90.25 117.83333333,92.08333333 120.16666667,93.91666667 122.5,95.75 123.07814453,96.20407227 123.65628906,96.65814453 124.25195312,97.12597656 125.41283354,98.03846748 126.57299614,98.95187238 127.73242188,99.86621094 130.73223616,102.22995661 133.74468273,104.57422923 136.78125,106.890625 150.82964979,117.65929958 150.82964979,117.65929958 154,124 154.51421665,129.08315807 154.80734489,134.26182313 152.5,138.9375 148.48700568,143.85341805 143.66127138,146.02080262 137.3671875,146.72265625 135.53761477,146.85329142 133.70664515,146.9651451 131.875,147.0625 130.34020996,147.16691406 130.34020996,147.16691406 128.77441406,147.2734375 125.63356339,147.48300514 122.4920872,147.67522482 119.34973145,147.86065674 111.53154551,148.3242891 103.71493991,148.81361614 95.89849854,149.30563354 92.77634481,149.49837365 89.653669,149.67955489 86.53076172,149.85961914 84.57777805,149.97897933 82.62481487,150.09867529 80.671875,150.21875 79.32015701,150.29215858 79.32015701,150.29215858 77.94113159,150.36705017 71.7386029,150.74517932 71.7386029,150.74517932 66,153 64.36344234,155.32324636 63.02573905,157.51346179 61.6875,160 60.81431556,161.5512382 59.93778529,163.10059601 59.05859375,164.6484375 58.57632324,165.50147461 58.09405273,166.35451172 57.59716797,167.23339844 53.94345669,173.56232785 50.03801229,179.74222154 46.18652344,185.9519043 42.76941887,191.47150197 39.39030827,197.00594964 36.10546875,202.60546875 35.48704102,203.6507373 34.86861328,204.69600586 34.23144531,205.77294922 33.06889152,207.74270898 31.91773399,209.71925738 30.78027344,211.70361328 27.4903747,217.24814905 24.70933034,220.88232074 19,224 13.50234524,225.1161695 8.55064453,224.74763219 3.5,222.3125 -0.86684128,218.27317181 -3.39480907,215.26300167 -4.13827515,209.26690674 -4.35936007,207.54134426 -4.35936007,207.54134426 -4.58491135,205.78092194 -4.7218906,204.5332177 -4.85886986,203.28551346 -5,202 -5.14534809,200.70413719 -5.29069618,199.40827438 -5.44044876,198.07314301 -5.92299842,193.62847651 -6.35570889,189.17931593 -6.78759766,184.72949219 -6.9550943,183.03101344 -7.12288332,181.33256351 -7.29093933,179.63414001 -7.74270963,175.05781204 -8.18981779,170.48104072 -8.63558245,165.90412426 -8.91522902,163.0349063 -9.1958707,160.1657874 -9.4768486,157.29669952 -10.45971751,147.25985344 -11.43865612,137.22263257 -12.4140625,127.18505859 -13.31911796,117.87257066 -14.23300777,108.56097819 -15.15099108,99.24975657 -15.94245758,91.21759218 -16.72752716,83.18481856 -17.50778043,75.15155721 -17.97227511,70.37043307 -18.43926472,65.58958702 -18.91279984,60.80934906 -19.35843031,56.30867818 -19.79600265,51.80729127 -20.22776222,47.30526924 -20.38616413,45.6673118 -20.54727853,44.02961365 -20.7115345,42.39223289 -21.53238299,34.19306058 -22.17165619,26.00414495 -22.34555054,17.76324463 -22.37332474,17.07110925 -22.40109895,16.37897388 -22.4297148,15.66586471 -22.46684663,10.63332359 -21.1138108,7.88485091 -18,4 -12.73546356,-1.00130962 -6.88562623,-1.12216855 0,0z M14,53C16.25546191,78.59969514 18.68004272,104.18014117 21.25,129.75 21.31832283,130.42980423 21.38664566,131.10960846 21.45703888,131.81001282 22.30128435,140.20701995 23.14896379,148.60367835 24,157 26.86093351,153.56122701 29.26411403,150.07263009 31.53125,146.21875 32.17707031,145.12949219 32.82289063,144.04023438 33.48828125,142.91796875 34.15214844,141.79003906 34.81601562,140.66210938 35.5,139.5 36.81938158,137.25833226 38.14218314,135.01867315 39.46875,132.78125 40.05076172,131.79189453 40.63277344,130.80253906 41.23242188,129.78320312 44.34512015,124.88199314 46.72577893,121.43844152 52.421875,119.56347656 58.19409768,118.30189608 64.11442242,118.16401119 70,117.875 72.64609942,117.73098153 75.29175518,117.58019394 77.9375,117.4296875 79.1646875,117.36104492 80.391875,117.29240234 81.65625,117.22167969 85.47183582,116.96871883 89.21711335,116.5500626 93,116 89.15195389,112.0050819 85.06784733,108.47720448 80.75,105 80.05326172,104.43603516 79.35652344,103.87207031 78.63867188,103.29101562 72.95844507,98.71739244 67.17591895,94.28688881 61.36499023,89.88134766 55.75593922,85.61505585 50.27444836,81.2090085 44.82177734,76.74536133 39.89355152,72.71356596 34.9128667,68.75571087 29.89501953,64.83618164 25.48836579,61.39320327 21.12999637,57.89374908 16.79296875,54.36328125 15.24272736,52.89912348 15.24272736,52.89912348 14,53z" />
-                                            </DrawingGroup>
-                                        </DrawingGroup>
-                                    </DrawingImage.Drawing>
-                                </DrawingImage>
-                            </Image.Source>
                         </Image>
                         <TextBlock
+                            Margin="7, 0, 0, 0"
                             VerticalAlignment="Center"
                             FontSize="16"
                             Text="Выбрать файлы"
                             TextDecorations="Underline" />
                     </StackPanel>
                 </Button>
-                <DataGrid
-                    MaxHeight="400"
-                    Margin="0,10,0,0"
-                    AutoGenerateColumns="False"
-                    CanUserAddRows="False"
-                    CanUserDeleteRows="False"
-                    ColumnWidth="*"
-                    FontSize="13"
-                    ItemsSource="{Binding SelectedFiles}"
-                    SelectionMode="Single">
-                    <DataGrid.Resources>
-                        <CollectionViewSource x:Key="AvailableQuestionnaireTypes" Source="{x:Static viewmodels:QuestionnairesUploadViewModel.AvailableQuestionnaireTypes}"/>
-                    </DataGrid.Resources>
-                    <DataGrid.Columns>
-                        <DataGridTextColumn IsReadOnly="True" 
-                                            Binding="{Binding FilePath}" 
-                                            Header="Файл" />
-                        
-                        <!-- TODO: Change to readonly when uploading started. -->
-                        <DataGridComboBoxColumn
-                            MaxWidth="250"
-                            Header="Тип опросника"
-                            ItemsSource="{Binding Source={StaticResource AvailableQuestionnaireTypes}}"
-                            SelectedItemBinding="{Binding SelectedQuestionnaireType}"
-                            DisplayMemberPath="DisplayTitle">
-                        </DataGridComboBoxColumn>
-                        
-                        <DataGridCheckBoxColumn Header="Статус"
-                                                MaxWidth="100"
-                                                IsReadOnly="True"
-                                                Binding="{Binding IsProcessed}"/>
-                    </DataGrid.Columns>
-                </DataGrid>
             </StackPanel>
         </StackPanel>
 
-        <Grid Grid.Row="1" Margin="10,15,10,8">
-            <StackPanel Visibility="{Binding IsUploadingRunning, Converter={StaticResource BoolVisibilityConverter}}" 
-                        HorizontalAlignment="Left" 
+        <DataGrid
+            Grid.Row="2"
+            VerticalAlignment="Top"
+            MaxHeight="400"
+            Margin="10,10,10,0"
+            Foreground="{StaticResource DefaultForegroundBrush}"
+            ColumnWidth="*"
+            FontSize="14"
+            ItemsSource="{Binding SelectedFiles}">
+            <DataGrid.Resources>
+                <CollectionViewSource x:Key="AvailableQuestionnaireTypes"
+                                      Source="{x:Static viewmodels:QuestionnairesUploadViewModel.AvailableQuestionnaireTypes}" />
+                
+                <Style x:Key="CheckBoxStyle" TargetType="CheckBox">
+                    <Setter Property="VerticalAlignment" Value="Center" />
+                    <Setter Property="HorizontalAlignment" Value="Center" />
+                    <Setter Property="IsEnabled" Value="False" />
+                </Style>
+            </DataGrid.Resources>
+            <DataGrid.Columns>
+                <DataGridTextColumn IsReadOnly="True"
+                                    Binding="{Binding FilePath}"
+                                    ElementStyle="{StaticResource TextWrappedTextBlockStyle}"
+                                    MinWidth="300"
+                                    Header="Файл" />
+
+                <DataGridTemplateColumn Header="Тип опросника"
+                                        MinWidth="200"
+                                        MaxWidth="250">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Style="{StaticResource TextCenteredTextBlockStyle}"
+                                       Text="{Binding SelectedQuestionnaireType.DisplayName}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <ComboBox ItemsSource="{Binding Source={StaticResource AvailableQuestionnaireTypes}}"
+                                      SelectedItem="{Binding SelectedQuestionnaireType}"
+                                      IsEnabled="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType=Window}}"
+                                      Padding="5"
+                                      DisplayMemberPath="DisplayName">
+                                <ComboBox.Style>
+                                    <Style TargetType="ComboBox" BasedOn="{StaticResource DefaultComboBoxStyle}">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsDropDownOpen" Value="True">
+                                                <Setter Property="BorderThickness" Value="0" />
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ComboBox.Style>
+                            </ComboBox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridCheckBoxColumn Header="Статус"
+                                        MinWidth="100"
+                                        MaxWidth="100"
+                                        ElementStyle="{StaticResource CheckBoxStyle}"
+                                        EditingElementStyle="{StaticResource CheckBoxStyle}"
+                                        Binding="{Binding IsProcessed}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <Grid Grid.Row="3" Margin="10,15,10,8">
+            <StackPanel Visibility="{Binding IsUploadingRunning, Converter={StaticResource BoolVisibilityConverter}}"
+                        HorizontalAlignment="Left"
                         Orientation="Horizontal">
                 <StackPanel.Resources>
                     <Style TargetType="TextBlock">
-                        <Setter Property="Margin" Value="5, 5, 0, 0"/>
-                        <Setter Property="FontSize" Value="14"/>
+                        <Setter Property="Margin" Value="5, 5, 0, 0" />
+                        <Setter Property="FontSize" Value="14" />
+                        <Setter Property="FontWeight" Value="500" />
+                        <Setter Property="VerticalAlignment" Value="Center" />
+                        <Setter Property="Foreground" Value="{StaticResource DefaultForegroundBrush}" />
                     </Style>
                 </StackPanel.Resources>
-                <ProgressBar MinWidth="150" 
-                             Maximum="{Binding MaxProgress}" 
-                             Value="{Binding Progress}"/>
-                <TextBlock Text="Загружено"/>
-                <TextBlock Text="{Binding Progress}"/>
-                <TextBlock Text="из"/>
-                <TextBlock Text="{Binding MaxProgress}"/>
+                <ProgressBar MinWidth="150"
+                             Height="30"
+                             BorderThickness="0"
+                             Foreground="{StaticResource IconBrush}"
+                             Background="{StaticResource DefaultIsMouseOverBrush}"
+                             Maximum="{Binding MaxProgress}"
+                             Value="{Binding Progress}" />
+                <TextBlock Text="Загружено" />
+                <TextBlock Text="{Binding Progress}" />
+                <TextBlock Text="из" />
+                <TextBlock Text="{Binding MaxProgress}" />
             </StackPanel>
-            
+
             <StackPanel
                 HorizontalAlignment="Right"
                 Orientation="Horizontal">
-                <StackPanel.Resources>
-                    <Style TargetType="Button">
-                        <Setter Property="MinWidth" Value="130" />
-                        <Setter Property="FontSize" Value="16" />
-                    </Style>
-                </StackPanel.Resources>
                 <Button
                     Margin="0,0,10,0"
                     Command="{Binding ConfirmCommand}"
+                    Style="{StaticResource ConfirmButtonStyle}"
                     Content="Подтвердить"
-                    CommandParameter="{Binding ElementName=Window}"/>
-                <Button Content="Отмена" Command="{Binding CancelCommand}"/>
+                    MinWidth="130"
+                    FontSize="13"
+                    CommandParameter="{Binding ElementName=Window}" />
+                <Button Content="Отмена"
+                        MinWidth="130"
+                        Style="{StaticResource CancelButtonStyle}"
+                        FontSize="13"
+                        Command="{Binding CancelCommand}" />
             </StackPanel>
         </Grid>
-
-        
     </Grid>
 </Window>

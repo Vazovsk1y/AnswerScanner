@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="ClosedXML.Report" Version="0.2.10" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.1" />
@@ -29,8 +30,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Resources\Icons\upload.png" />
-    <Resource Include="Resources\Icons\export.png" />
+    <None Remove="QuestionnairesExportTemplate.xlsx" />
+    <EmbeddedResource Include="QuestionnairesExportTemplate.xlsx" />
   </ItemGroup>
 
 </Project>

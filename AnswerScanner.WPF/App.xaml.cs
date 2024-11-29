@@ -24,8 +24,9 @@ public partial class App : Application
     {
         base.OnStartup(e);
 
-        var vm = Services.GetRequiredService<MainWindowViewModel>();
         var window = Services.GetRequiredService<MainWindow>();
+        var vm = Services.GetRequiredService<MainWindowViewModel>();
+        
         window.DataContext = vm;
         window.Show();
     }

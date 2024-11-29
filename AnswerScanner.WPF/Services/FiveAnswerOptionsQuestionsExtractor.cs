@@ -61,7 +61,7 @@ public class FiveAnswerOptionsQuestionsExtractor : QuestionsExtractorBase, IQues
         
         do  
         {
-            var lineText = iterator.GetText(PageIteratorLevel.TextLine).Trim();
+            var lineText = iterator.GetText(PageIteratorLevel.TextLine)?.Trim();
             if (string.IsNullOrWhiteSpace(lineText))
             {
                 continue;
@@ -164,7 +164,7 @@ public class FiveAnswerOptionsQuestionsExtractor : QuestionsExtractorBase, IQues
         var answerOptionsRegion = new TesseractRect(halfWidth, 0, halfWidth, height);
 
         using var mainQuestionPage = ocrEngine.Process(sourcePix, mainQuestionRegion);
-        var mainQuestionText = mainQuestionPage.GetText().Trim();
+        var mainQuestionText = mainQuestionPage.GetText()?.Trim() ?? string.Empty;
 
         mainQuestionPage.Dispose();
 
@@ -186,7 +186,11 @@ public class FiveAnswerOptionsQuestionsExtractor : QuestionsExtractorBase, IQues
 
             do
             {
-                var word = answerOptionsRegionIterator.GetText(PageIteratorLevel.Word).Trim();
+                var word = answerOptionsRegionIterator.GetText(PageIteratorLevel.Word)?.Trim();
+                if (string.IsNullOrWhiteSpace(word))
+                {
+                    continue;
+                }
             
                 if (AnswerOptionsExpectedKeyWords.Contains(word, StringComparer.InvariantCultureIgnoreCase))
                 {

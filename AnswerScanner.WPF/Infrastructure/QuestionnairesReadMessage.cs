@@ -2,4 +2,4 @@
 
 namespace AnswerScanner.WPF.Infrastructure;
 
-public record QuestionnairesReadMessage(IEnumerable<QuestionnaireViewModel> Questionnaires);
+public record QuestionnairesReadMessage(IReadOnlyCollection<QuestionnaireViewModel> Questionnaires);
