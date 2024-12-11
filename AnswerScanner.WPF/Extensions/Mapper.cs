@@ -19,7 +19,12 @@ public static class Mapper
 
     private static QuestionViewModel ToViewModel(this Question question)
     {
-        return new QuestionViewModel(question.Number, question.Text, question.Answer.ToViewModel());
+        return new QuestionViewModel
+        {
+            Number = question.Number,
+            Text = question.Text,
+            Answer = question.Answer.ToViewModel(),
+        };
     }
 
     private static EnumViewModel<T> ToViewModel<T>(this T @enum) where T : Enum

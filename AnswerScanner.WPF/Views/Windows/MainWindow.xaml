@@ -36,6 +36,7 @@
 
     <Window.Resources>
         <infr:NullVisibilityConverter x:Key="NullVisibilityConverter" />
+        <infr:QuestionnaireTypeAnswersConverter x:Key="QuestionnaireTypeAnswersConverter"/>
     </Window.Resources>
 
     <Grid>
@@ -428,27 +429,52 @@
                                       Margin="0,10,0,0"
                                       FontSize="16"
                                       ColumnWidth="*"
-                                      IsReadOnly="True"
                                       Foreground="{StaticResource DefaultForegroundBrush}"
                                       ItemsSource="{Binding SelectedQuestionnaire.Questions}">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn
                                         MinWidth="40"
                                         MaxWidth="40"
+                                        IsReadOnly="True"
                                         Binding="{Binding Number}"
                                         ElementStyle="{StaticResource TextCenteredTextBlockStyle}"
                                         Header="№" />
                                     <DataGridTextColumn
                                         MinWidth="300"
+                                        IsReadOnly="True"
                                         ElementStyle="{StaticResource TextWrappedTextBlockStyle}"
                                         Binding="{Binding Text}"
                                         Header="Текст вопроса" />
-                                    <DataGridTextColumn
-                                        MinWidth="100"
-                                        MaxWidth="150"
-                                        ElementStyle="{StaticResource TextCenteredTextBlockStyle}"
-                                        Binding="{Binding Answer.DisplayName}"
-                                        Header="Ответ" />
+                                    
+                                    <DataGridTemplateColumn Header="Ответ"
+                                                            MinWidth="100"
+                                                            MaxWidth="150">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Style="{StaticResource TextCenteredTextBlockStyle}"
+                                                           Text="{Binding Answer.DisplayName}" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+
+                                        <DataGridTemplateColumn.CellEditingTemplate>
+                                            <DataTemplate>
+                                                <ComboBox ItemsSource="{Binding DataContext.SelectedQuestionnaire.Type.Value, Converter={StaticResource QuestionnaireTypeAnswersConverter}, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                          SelectedItem="{Binding Answer}"
+                                                          Padding="5"
+                                                          DisplayMemberPath="DisplayName">
+                                                    <ComboBox.Style>
+                                                        <Style TargetType="ComboBox" BasedOn="{StaticResource DefaultComboBoxStyle}">
+                                                            <Style.Triggers>
+                                                                <Trigger Property="IsDropDownOpen" Value="True">
+                                                                    <Setter Property="BorderThickness" Value="0" />
+                                                                </Trigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </ComboBox.Style>
+                                                </ComboBox>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellEditingTemplate>
+                                    </DataGridTemplateColumn>
                                 </DataGrid.Columns>
                             </DataGrid>
                         </Grid>
