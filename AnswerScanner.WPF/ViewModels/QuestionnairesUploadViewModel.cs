@@ -30,6 +30,7 @@ public partial class QuestionnairesUploadViewModel : ObservableRecipient
     [ObservableProperty] 
     [NotifyCanExecuteChangedFor(nameof(CancelCommand))]
     [NotifyPropertyChangedFor(nameof(IsEditable))]
+    [NotifyCanExecuteChangedFor(nameof(DropCommand))]
     private bool _isUploadingRunning;
     
     public bool IsEditable => !IsUploadingRunning;
@@ -42,6 +43,7 @@ public partial class QuestionnairesUploadViewModel : ObservableRecipient
     
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(CancelCommand))]
+    [NotifyCanExecuteChangedFor(nameof(DropCommand))]
     private bool _isCancellingRunning;
     
     [ObservableProperty]
@@ -195,6 +197,35 @@ public partial class QuestionnairesUploadViewModel : ObservableRecipient
                                 !IsCancellingRunning && 
                                 IsCancellingEnabled;
 
+    [RelayCommand(CanExecute = nameof(CanDrop))]
+    private void OnDrop(object parameter)
+    {
+        if (parameter is not DragEventArgs args)
+        {
+            return;
+        }
+
+        var files = args.Data.GetData(DataFormats.FileDrop) as string[];
+        if (files is null or { Length: 0 } || !files.Any(e => MainWindowViewModel.AllowedExtensions.Contains(Path.GetExtension(e), StringComparer.InvariantCultureIgnoreCase)))
+        {
+            return;
+        }
+        
+        SelectedFiles.Clear();
+        
+        foreach (var file in files.Where(e => MainWindowViewModel.AllowedExtensions.Contains(Path.GetExtension(e), StringComparer.InvariantCultureIgnoreCase)))
+        {
+            SelectedFiles.Add(new SelectedFileViewModel
+            {
+                FilePath = file, 
+                SelectedQuestionnaireType = SelectedQuestionnaireType, 
+                IsProcessed = false
+            });
+        }
+    }
+
+    private bool CanDrop() => !IsUploadingRunning && !IsCancellingRunning;
+    
     partial void OnSelectedQuestionnaireTypeChanged(EnumViewModel<QuestionnaireType> value)
     {
         foreach (var item in SelectedFiles)

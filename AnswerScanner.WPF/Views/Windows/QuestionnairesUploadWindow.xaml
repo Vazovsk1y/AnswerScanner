@@ -6,15 +6,25 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodels="clr-namespace:AnswerScanner.WPF.ViewModels"
     xmlns:infr="clr-namespace:AnswerScanner.WPF.Infrastructure"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:b="clr-namespace:Microsoft.Xaml.Behaviors;assembly=Microsoft.Xaml.Behaviors"
     MouseDown="StartWindowMoving"
     x:Name="Window"
     Width="1000"
+    Title="Загрузка опросников"
     Height="600"
+    AllowDrop="True"
     WindowStyle="None"
     Style="{StaticResource DialogWindowStyle}"
     d:DataContext="{d:DesignInstance Type=viewmodels:QuestionnairesUploadViewModel}"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
+    
+    <i:Interaction.Triggers>
+        <b:EventTrigger EventName="Drop">
+            <infr:DragEventToCommand Command="{Binding DropCommand}"/>
+        </b:EventTrigger>
+    </i:Interaction.Triggers>
 
     <WindowChrome.WindowChrome>
         <WindowChrome CornerRadius="0"

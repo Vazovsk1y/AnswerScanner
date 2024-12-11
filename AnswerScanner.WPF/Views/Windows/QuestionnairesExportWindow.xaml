@@ -5,6 +5,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:vms="clr-namespace:AnswerScanner.WPF.ViewModels"
         WindowStartupLocation="CenterScreen"
+        Title="Экспорт опросников"
         d:DataContext="{d:DesignInstance Type=vms:QuestionnairesExportViewModel}"
         Height="550"
         Width="1000"
