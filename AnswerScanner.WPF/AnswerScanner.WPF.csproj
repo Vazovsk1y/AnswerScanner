@@ -7,6 +7,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <StartupObject>AnswerScanner.WPF.Program</StartupObject>
+    <ApplicationIcon>logo.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -32,6 +33,8 @@
   <ItemGroup>
     <None Remove="QuestionnairesExportTemplate.xlsx" />
     <EmbeddedResource Include="QuestionnairesExportTemplate.xlsx" />
+    <None Remove="logo.ico" />
+    <EmbeddedResource Include="logo.ico" />
   </ItemGroup>
 
 </Project>
