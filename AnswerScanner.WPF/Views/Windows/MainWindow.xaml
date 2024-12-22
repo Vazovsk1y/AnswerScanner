@@ -21,10 +21,10 @@
     WindowStartupLocation="CenterScreen"
     WindowStyle="None"
     mc:Ignorable="d">
-    
+
     <i:Interaction.Triggers>
         <b:EventTrigger EventName="Drop">
-            <infr:DragEventToCommand Command="{Binding DropCommand}"/>
+            <infr:DragEventToCommand Command="{Binding DropCommand}" />
         </b:EventTrigger>
     </i:Interaction.Triggers>
 
@@ -36,551 +36,865 @@
 
     <Window.Resources>
         <infr:NullVisibilityConverter x:Key="NullVisibilityConverter" />
-        <infr:QuestionnaireTypeAnswersConverter x:Key="QuestionnaireTypeAnswersConverter"/>
+        <infr:QuestionnaireTypeAnswersConverter x:Key="QuestionnaireTypeAnswersConverter" />
+        <infr:InverseNullVisibilityConverter x:Key="InverseNullVisibilityConverter" />
     </Window.Resources>
 
     <Grid>
-        <DockPanel>
-            <Grid DockPanel.Dock="Top"
-                  Background="{StaticResource HeaderBackgroundBrush}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
 
-                <Grid Margin="10, 0, 0, 0">
-                    <Image Source="{StaticResource Logo}"
-                           VerticalAlignment="Center"
-                           HorizontalAlignment="Center"
-                           Width="25"
-                           Height="25" />
-                </Grid>
+        <Grid DockPanel.Dock="Top"
+              Background="{StaticResource HeaderBackgroundBrush}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
 
-                <Menu Background="Transparent"
-                      Margin="3, 0, 0, 0"
-                      Grid.Column="1">
-                    <Menu.Resources>
-
-                        <ControlTemplate x:Key="TopLevelMenuItemTemplate" TargetType="{x:Type MenuItem}">
-                            <Border x:Name="MenuItemBorder"
-                                    Padding="{TemplateBinding Padding}"
-                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                    Background="{TemplateBinding Background}">
-                                <Grid VerticalAlignment="Center">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <ContentPresenter Content="{TemplateBinding Header}"
-                                                      ContentSource="Header"
-                                                      SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                                    <Popup Grid.Column="0" AllowsTransparency="True"
-                                           IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}"
-                                           Placement="Bottom"
-                                           PlacementTarget="{Binding ElementName=MenuItemBorder}"
-                                           HorizontalOffset="1"
-                                           VerticalOffset="-1">
-                                        <Border BorderBrush="#414141"
-                                                Background="#414141">
-                                            <ScrollViewer
-                                                Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer, TypeInTargetAssembly={x:Type FrameworkElement}}}">
-                                                <ItemsPresenter
-                                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                                            </ScrollViewer>
-                                        </Border>
-                                    </Popup>
-                                </Grid>
-                            </Border>
-                        </ControlTemplate>
-
-                        <ControlTemplate x:Key="InnerMenuItemTemplate" TargetType="{x:Type MenuItem}">
-                            <Border x:Name="templateRoot"
-                                    Margin="{TemplateBinding Margin}"
-                                    Padding="{TemplateBinding Padding}"
-                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                    Background="{TemplateBinding Background}"
-                                    SnapsToDevicePixels="True">
-                                <Grid Margin="-1"
-                                      Background="Transparent">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition MinWidth="22"
-                                                          SharedSizeGroup="MenuItemIconColumnGroup"
-                                                          Width="Auto" />
-                                        <ColumnDefinition Width="13" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="30" />
-                                        <ColumnDefinition SharedSizeGroup="MenuItemIGTColumnGroup"
-                                                          Width="Auto" />
-                                        <ColumnDefinition Width="20" />
-                                    </Grid.ColumnDefinitions>
-                                    <ContentPresenter x:Name="Icon" Content="{TemplateBinding Icon}"
-                                                      ContentSource="Icon" HorizontalAlignment="Center"
-                                                      Height="16" Margin="10, 3, 3, 3"
-                                                      SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                                                      VerticalAlignment="Center" Width="16" />
-                                    <Border Grid.Column="0" x:Name="GlyphPanel"
-                                            BorderBrush="{TemplateBinding BorderBrush}"
-                                            BorderThickness="1"
-                                            Background="#3D26A0DA" ClipToBounds="False"
-                                            HorizontalAlignment="Center" Height="22" Margin="-1,0,0,0"
-                                            Visibility="Hidden" VerticalAlignment="Center" Width="22">
-                                        <Path x:Name="Glyph"
-                                              Data="F1M10,1.2L4.7,9.1 4.5,9.1 0,5.2 1.3,3.5 4.3,6.1 8.3,0 10,1.2z"
-                                              Fill="#FF212121" FlowDirection="LeftToRight" Height="11"
-                                              Width="10" />
-                                    </Border>
-                                    <ContentPresenter x:Name="menuHeaderContainer"
-                                                      ContentTemplate="{TemplateBinding HeaderTemplate}"
-                                                      Content="{TemplateBinding Header}" Grid.Column="2"
-                                                      ContentStringFormat="{TemplateBinding HeaderStringFormat}"
-                                                      ContentSource="Header" HorizontalAlignment="Left"
-                                                      Margin="{TemplateBinding Padding}"
-                                                      RecognizesAccessKey="True"
-                                                      SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                                                      VerticalAlignment="Center" />
-                                    <TextBlock x:Name="menuGestureText" Grid.Column="4"
-                                               Margin="{TemplateBinding Padding}" Opacity="0.7"
-                                               Text="{TemplateBinding InputGestureText}"
-                                               VerticalAlignment="Center" />
-                                </Grid>
-                            </Border>
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="Icon" Value="{x:Null}">
-                                    <Setter Property="Visibility" TargetName="Icon" Value="Collapsed" />
-                                </Trigger>
-                                <Trigger Property="IsChecked" Value="True">
-                                    <Setter Property="Visibility" TargetName="GlyphPanel" Value="Visible" />
-                                    <Setter Property="Visibility" TargetName="Icon" Value="Collapsed" />
-                                </Trigger>
-                                <Trigger Property="IsEnabled" Value="False">
-                                    <Setter Property="TextElement.Foreground" TargetName="templateRoot"
-                                            Value="#FF707070" />
-                                    <Setter Property="Fill" TargetName="Glyph" Value="#FF707070" />
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-
-                        <Style x:Key="MainMenuItem" TargetType="MenuItem">
-                            <Setter Property="Foreground" Value="{StaticResource DefaultForegroundBrush}" />
-                            <Setter Property="FontWeight" Value="500" />
-                            <Setter Property="FontSize" Value="20" />
-                            <Setter Property="Padding" Value="8, 10, 8, 10" />
-
-                            <Setter Property="Template" Value="{StaticResource TopLevelMenuItemTemplate}" />
-
-                            <Style.Triggers>
-                                <Trigger Property="IsHighlighted" Value="True">
-                                    <Setter Property="Background" Value="{StaticResource DefaultIsMouseOverBrush}" />
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-
-                        <Style x:Key="InnerMenuItem" TargetType="MenuItem">
-                            <Setter Property="Foreground" Value="{StaticResource DefaultForegroundBrush}" />
-                            <Setter Property="FontWeight" Value="500" />
-                            <Setter Property="FontSize" Value="18" />
-                            <Setter Property="MinHeight" Value="40" />
-
-                            <Setter Property="Background" Value="{StaticResource HeaderBackgroundBrush}" />
-                            <Setter Property="Template" Value="{StaticResource InnerMenuItemTemplate}" />
-
-                            <Style.Triggers>
-                                <Trigger Property="IsHighlighted" Value="True">
-                                    <Setter Property="Background" Value="{StaticResource DefaultItemSelectedBrush}" />
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Menu.Resources>
-
-                    <MenuItem Style="{StaticResource MainMenuItem}" Header="Файл">
-                        <MenuItem
-                            Style="{StaticResource InnerMenuItem}"
-                            Command="{Binding UploadQuestionnairesCommand}"
-                            Header="Загрузить">
-                            <MenuItem.Icon>
-                                <Image>
-                                    <Image.Source>
-                                        <DrawingImage>
-                                            <DrawingImage.Drawing>
-                                                <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
-                                                    <DrawingGroup.Transform>
-                                                        <TranslateTransform X="97.933601379394531"
-                                                                            Y="0.03079843707382679" />
-                                                    </DrawingGroup.Transform>
-                                                    <DrawingGroup Transform="1,0,0,1,225.5625,-0.517578125">
-                                                        <GeometryDrawing
-                                                            Brush="{StaticResource DefaultForegroundBrush}"
-                                                            Geometry="F1 M512,512z M0,0z M0,0C0.73250977,-0.00700928 1.46501953,-0.01401855 2.21972656,-0.02124023 4.62604382,-0.03875584 7.03117209,-0.02722142 9.4375,-0.01367188 11.11849186,-0.01636866 12.79948221,-0.02025264 14.48046875,-0.02526855 17.99754743,-0.03115485 21.5142188,-0.02262896 25.03125,-0.00390625 29.53052189,0.01888312 34.02883927,0.00575532 38.52807617,-0.01819611 41.99746847,-0.03267779 45.46663594,-0.02803731 48.93603516,-0.01768494 50.59456496,-0.01502418 52.25311544,-0.01826444 53.91162109,-0.02760315 56.23329421,-0.03780834 58.55344011,-0.02221466 60.875,0 62.19371094,0.00318237 63.51242187,0.00636475 64.87109375,0.00964355 70.2634298,0.77763063 73.15061472,2.96051062 76.58102036,7.11113167 78.9340868,11.42876309 78.98752291,14.53546036 78.91851807,19.3633728 78.92193577,20.24237956 78.92535347,21.12138631 78.92887473,22.02702963 78.9354521,24.96610768 78.91347983,27.90426811 78.89160156,30.84326172 78.89047305,32.95249408 78.89110701,35.06172802 78.89337158,37.17095947 78.89451952,42.89369985 78.87099696,48.61610506 78.84307575,54.33876753 78.8180756,60.32052379 78.81572118,66.30228769 78.81097412,72.28408813 78.79854031,83.60998879 78.76571306,94.93573505 78.72557616,106.26156771 78.6808712,119.15624023 78.65887459,132.0509201 78.63879442,144.94565082 78.59698091,171.46971219 78.52662082,197.99363651 78.4375,224.51757812 79.30114166,224.50869568 80.16478333,224.49981323 81.05459595,224.49066162 89.2054158,224.41041473 97.35610241,224.34956248 105.50722694,224.31032944 109.69753538,224.28948094 113.88751659,224.26121396 118.07763672,224.21582031 122.12362242,224.17226393 126.16929395,224.14842042 130.21549606,224.13806915 131.75684935,224.13069526 133.29818602,224.11629555 134.83940506,224.0946579 137.00349936,224.06549202 139.16630625,224.06162737 141.33056641,224.06347656 142.56078522,224.05459412 143.79100403,224.04571167 145.0585022,224.03656006 150.52493438,224.81473536 153.52966979,227.3230647 156.8125,231.64257812 159.1103474,236.14172472 159.19789882,240.58699207 158.4375,245.51757812 156.07084786,251.27986161 152.05599392,255.31745766 147.8515625,259.85742188 145.50394777,262.44435656 143.30785802,265.10349002 141.125,267.83007812 137.23429292,272.64423401 133.10749534,277.16682146 128.87963867,281.6809082 125.76225274,285.02822055 122.80190833,288.447446 119.9375,292.01757812 116.11755989,296.7786629 112.04811181,301.23030838 107.87890625,305.68164062 104.76181446,309.02874682 101.80168887,312.44771953 98.9375,316.01757812 95.11755989,320.7786629 91.04811181,325.23030838 86.87890625,329.68164062 83.76181446,333.02874682 80.80168887,336.44771953 77.9375,340.01757812 74.11755989,344.7786629 70.04811181,349.23030838 65.87890625,353.68164062 62.76181446,357.02874682 59.80168887,360.44771953 56.9375,364.01757812 53.46250754,368.33114281 49.85526982,372.48764619 46.125,376.58007812 45.62097656,377.14082031 45.11695313,377.7015625 44.59765625,378.27929688 41.09197692,382.08492738 38.79166809,384.23560256 33.6328125,384.85351562 32.61960937,384.86640625 31.60640625,384.87929688 30.5625,384.89257812 29.55445313,384.9209375 28.54640625,384.94929688 27.5078125,384.97851562 21.13915805,384.0224072 17.26994888,379.56671754 13.125,374.95507812 12.6498999,374.42841553 12.1747998,373.90175293 11.68530273,373.35913086 7.91521601,369.14483643 4.36002131,364.77098118 0.81640625,360.36523438 -2.3597857,356.56319179 -5.73520822,352.9685406 -9.12084961,349.35375977 -13.0224667,345.16428287 -16.63574797,340.79584877 -20.21875,336.33007812 -22.89458171,333.11908007 -25.70608276,330.06728676 -28.5625,327.01757812 -33.00082674,322.27891348 -37.1539225,317.39638487 -41.21875,312.33007812 -43.89458171,309.11908007 -46.70608276,306.06728676 -49.5625,303.01757812 -54.00082674,298.27891348 -58.1539225,293.39638487 -62.21875,288.33007812 -64.89458492,285.11907622 -67.70612569,282.0673318 -70.5625,279.01757812 -75.05536855,274.21938958 -79.28513262,269.2852676 -83.39453125,264.15039062 -86.32160307,260.59571242 -89.45106069,257.24631962 -92.6171875,253.90429688 -96.78486712,248.79093894 -98.13392989,244.45239895 -97.91015625,237.98242188 -97.18257514,232.82395357 -94.95303485,229.63182003 -90.85824585,226.35064697 -87.0377116,224.2256948 -84.80002844,224.03210861 -80.45556641,224.06347656 -79.43012726,224.0626004 -79.43012726,224.0626004 -78.38397217,224.06170654 -76.14347025,224.06447442 -73.90432949,224.09550132 -71.6640625,224.12695312 -70.10322801,224.13442021 -68.54238411,224.14011094 -66.98153687,224.144104 -62.88781522,224.15932372 -58.79466778,224.19857305 -54.70117188,224.24291992 -50.51830817,224.28395229 -46.33535102,224.30213195 -42.15234375,224.32226562 -33.95546665,224.36507165 -25.7590549,224.43327758 -17.5625,224.51757812 -17.56618717,223.42021017 -17.56987434,222.32284222 -17.57367325,221.19222069 -17.66243516,194.50219472 -17.72818577,167.81218787 -17.76974869,141.12204552 -17.79038197,128.21493665 -17.81851735,115.30792523 -17.86425781,102.40087891 -17.90410195,91.15230578 -17.92992724,79.90380323 -17.93885398,68.6551615 -17.94407279,62.6979808 -17.95635511,56.741002 -17.98542023,50.78388596 -18.01255084,45.17789306 -18.02094965,39.57218543 -18.01493073,33.96613312 -18.01603201,31.90778936 -18.02399973,29.84943616 -18.0393219,27.79114914 -18.05921274,24.98153924 -18.05444231,22.17300746 -18.04351807,19.3633728 -18.05516943,18.54818692 -18.0668208,17.73300103 -18.07882524,16.89311254 -18.02359732,11.64095119 -17.01610737,8.69627212 -13.5625,4.51757812 -9.03823413,0.70142191 -5.8581698,0.0141372 0,0z" />
-                                                    </DrawingGroup>
-                                                    <DrawingGroup Transform="1,0,0,1,16,352">
-                                                        <GeometryDrawing
-                                                            Brush="{StaticResource DefaultForegroundBrush}"
-                                                            Geometry="F1 M512,512z M0,0z M0,0C21.12,0 42.24,0 64,0 64,31.68 64,63.36 64,96 180.16,96 296.32,96 416,96 416,64.32 416,32.64 416,0 437.12,0 458.24,0 480,0 480.16121214,33.74259587 480.16121214,33.74259587 480.1953125,47.90429688 480.2190284,57.67480893 480.24687803,67.4451828 480.30175781,77.21557617 480.341711,84.33195909 480.36745301,91.44822968 480.37635398,98.56472164 480.38155445,102.3305506 480.39371875,106.0960583 480.42292023,109.86178398 480.45022386,113.41178625 480.45841521,116.96133725 480.45243073,120.51143456 480.4540428,122.42417556 480.47548706,124.33686827 480.49768066,126.2494812 480.46363808,133.41067616 479.60382887,138.77097269 476,145 475.62168156,145.65394965 475.24336311,146.3078993 474.85358047,146.98166561 470.64583866,153.8761477 463.61395111,157.84903253 456,160 453.51836188,160.17913945 451.02824268,160.25458313 448.54014874,160.25726891 447.80654461,160.26077498 447.07294048,160.26428105 446.31710592,160.26789337 443.85754299,160.27720134 441.39821715,160.27228565 438.93864441,160.26742554 437.15796459,160.2711621 435.37728642,160.27576364 433.59661084,160.28115618 428.70204379,160.2934008 423.80754501,160.29312399 418.91296613,160.29076743 413.63472079,160.29035964 408.35649745,160.30139482 403.07826233,160.31088257 392.73679102,160.3275014 382.3953425,160.33299251 372.05385896,160.33410732 363.64875477,160.33505735 355.2436581,160.33916536 346.83855629,160.34550858 323.01378006,160.36312315 299.18902185,160.37234707 275.36423906,160.37084763 274.0796139,160.37076772 272.79498874,160.3706878 271.47143555,160.37060547 270.18524377,160.37052371 268.89905199,160.37044195 267.5738847,160.37035771 246.72576738,160.36954467 225.87772228,160.38868615 205.02962586,160.4168822 183.62808244,160.44559862 162.22657425,160.45942319 140.82501107,160.45769465 128.80758223,160.45703033 116.79022911,160.46254088 104.77281761,160.48405075 94.54153925,160.50224614 84.31037093,160.50662334 74.07908341,160.4930319 68.85873778,160.48649409 63.63860338,160.48641454 58.41827774,160.5037384 53.63827426,160.51943795 48.85865005,160.51663731 44.078656,160.49917014 42.35055576,160.49609339 40.62242744,160.49975801 38.89436033,160.51089029 22.38350059,160.61019933 22.38350059,160.61019933 15,156 14.35112436,155.6217336 13.70224872,155.2434672 13.03371018,154.85373819 6.09131076,150.65396556 2.21396446,143.61288476 0,136 -0.24609566,133.13775063 -0.24609566,133.13775063 -0.24050903,130.11538696 -0.24325836,128.96281403 -0.24600769,127.81024109 -0.24884033,126.6227417 -0.24164978,125.37261292 -0.23445923,124.12248413 -0.22705078,122.83447266 -0.22648613,121.49370329 -0.22680428,120.15293331 -0.22793579,118.81216431 -0.22850821,115.18448153 -0.21677194,111.55693175 -0.20278788,107.9292798 -0.19026199,104.13363607 -0.18910855,100.33798909 -0.18673706,96.54232788 -0.18052775,89.36014021 -0.16412437,82.17801363 -0.14403808,74.99585283 -0.11747576,65.28676314 -0.106702,55.57765668 -0.09503365,45.86853981 -0.07624337,30.57898081 -0.03639406,15.2895507 0,0z" />
-                                                    </DrawingGroup>
-                                                </DrawingGroup>
-                                            </DrawingImage.Drawing>
-                                        </DrawingImage>
-                                    </Image.Source>
-                                </Image>
-                            </MenuItem.Icon>
-                        </MenuItem>
-
-                        <MenuItem Style="{StaticResource InnerMenuItem}"
-                                  Command="{Binding ExportQuestionnairesCommand}"
-                                  Header="Экспортировать">
-                            <MenuItem.Icon>
-                                <Image>
-                                    <Image.Source>
-                                        <DrawingImage>
-                                            <DrawingImage.Drawing>
-                                                <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
-                                                    <DrawingGroup.Transform>
-                                                        <TranslateTransform X="128.30339050292969" Y="0.0859375" />
-                                                    </DrawingGroup.Transform>
-                                                    <DrawingGroup Transform="1,0,0,1,255.875,-0.375">
-                                                        <GeometryDrawing
-                                                            Brush="{StaticResource DefaultForegroundBrush}"
-                                                            Geometry="F1 M512,512z M0,0z M0,0C1.00804687,-0.02835938 2.01609375,-0.05671875 3.0546875,-0.0859375 9.42334195,0.87017093 13.29255112,5.32586058 17.4375,9.9375 17.9126001,10.4641626 18.3877002,10.9908252 18.87719727,11.53344727 22.64728399,15.74774169 26.20247869,20.12159694 29.74609375,24.52734375 32.9222857,28.32938633 36.29770822,31.92403752 39.68334961,35.53881836 43.5849667,39.72829526 47.19824797,44.09672936 50.78125,48.5625 53.45708171,51.77349805 56.26858276,54.82529137 59.125,57.875 63.56332674,62.61366464 67.7164225,67.49619326 71.78125,72.5625 74.45708171,75.77349805 77.26858276,78.82529137 80.125,81.875 84.56332674,86.61366464 88.7164225,91.49619326 92.78125,96.5625 95.45708492,99.77350191 98.26862569,102.82524633 101.125,105.875 105.61786855,110.67318854 109.84763262,115.60731053 113.95703125,120.7421875 116.88410307,124.29686571 120.01356069,127.64625851 123.1796875,130.98828125 127.34736712,136.10163918 128.69642989,140.44017918 128.47265625,146.91015625 127.74507514,152.06862455 125.51553485,155.2607581 121.42074585,158.54193115 117.6002116,160.66688333 115.36252844,160.86046952 111.01806641,160.82910156 110.33444031,160.82968567 109.65081421,160.83026978 108.94647217,160.83087158 106.70597025,160.82810371 104.46682949,160.79707681 102.2265625,160.765625 100.66572801,160.75815791 99.10488411,160.75246719 97.54403687,160.74847412 93.45031522,160.73325441 89.35716778,160.69400507 85.26367188,160.6496582 81.08080817,160.60862584 76.89785102,160.59044617 72.71484375,160.5703125 64.51796665,160.52750648 56.3215549,160.45930054 48.125,160.375 48.12868717,161.47236795 48.13237434,162.56973591 48.13617325,163.70035744 48.22493516,190.39038341 48.29068577,217.08039026 48.33224869,243.77053261 48.35288197,256.67764148 48.38101735,269.58465289 48.42675781,282.49169922 48.46660195,293.74027234 48.49242724,304.9887749 48.50135398,316.23741663 48.50657279,322.19459732 48.51885511,328.15157612 48.54792023,334.10869217 48.57505084,339.71468506 48.58344965,345.3203927 48.57743073,350.92644501 48.57853201,352.98478876 48.58649973,355.04314196 48.6018219,357.10142899 48.62171274,359.91103889 48.61694231,362.71957066 48.60601807,365.52920532 48.61766943,366.34439121 48.6293208,367.1595771 48.64132524,367.99946558 48.58609732,373.25162694 47.57860737,376.196306 44.125,380.375 39.60073413,384.19115622 36.4206698,384.87844092 30.5625,384.89257812 29.46373535,384.90309204 29.46373535,384.90309204 28.34277344,384.91381836 25.93645618,384.93133397 23.53132791,384.91979954 21.125,384.90625 19.44400814,384.90894679 17.76301779,384.91283077 16.08203125,384.91784668 12.56495257,384.92373298 9.0482812,384.91520709 5.53125,384.89648438 1.03197811,384.87369501 -3.46633927,384.8868228 -7.96557617,384.91077423 -11.43496847,384.92525591 -14.90413594,384.92061544 -18.37353516,384.91026306 -20.03206496,384.90760231 -21.69061544,384.91084257 -23.34912109,384.92018127 -25.67079421,384.93038646 -27.99094011,384.91479279 -30.3125,384.89257812 -31.63121094,384.88939575 -32.94992188,384.88621338 -34.30859375,384.88293457 -39.7009298,384.1149475 -42.58811472,381.9320675 -46.01852036,377.78144646 -48.3715868,373.46381504 -48.42502291,370.35711777 -48.35601807,365.52920532 -48.35943577,364.65019857 -48.36285347,363.77119181 -48.36637473,362.86554849 -48.3729521,359.92647045 -48.35097983,356.98831001 -48.32910156,354.04931641 -48.32797305,351.94008404 -48.32860701,349.8308501 -48.33087158,347.72161865 -48.33201952,341.99887828 -48.30849696,336.27647306 -48.28057575,330.5538106 -48.2555756,324.57205433 -48.25322118,318.59029044 -48.24847412,312.60848999 -48.23604031,301.28258934 -48.20321306,289.95684307 -48.16307616,278.63101041 -48.1183712,265.7363379 -48.09637459,252.84165802 -48.07629442,239.94692731 -48.03448091,213.42286594 -47.96412082,186.89894162 -47.875,160.375 -48.73864166,160.38388245 -49.60228333,160.39276489 -50.49209595,160.4019165 -58.6429158,160.48216339 -66.79360241,160.54301565 -74.94472694,160.58224869 -79.13503538,160.60309718 -83.32501659,160.63136416 -87.51513672,160.67675781 -91.56112242,160.72031419 -95.60679395,160.7441577 -99.65299606,160.75450897 -101.19434935,160.76188286 -102.73568602,160.77628257 -104.27690506,160.79792023 -106.44099936,160.82708611 -108.60380625,160.83095076 -110.76806641,160.82910156 -111.99828522,160.83798401 -113.22850403,160.84686646 -114.4960022,160.85601807 -119.96243438,160.07784276 -122.96716979,157.56951343 -126.25,153.25 -128.5478474,148.75085341 -128.63539882,144.30558606 -127.875,139.375 -125.50834786,133.61271652 -121.49349392,129.57512047 -117.2890625,125.03515625 -114.94144777,122.44822157 -112.74535802,119.7890881 -110.5625,117.0625 -106.67179292,112.24834412 -102.54499534,107.72575666 -98.31713867,103.21166992 -95.19975274,99.86435757 -92.23940833,96.44513212 -89.375,92.875 -85.55505989,88.11391522 -81.48561181,83.66226975 -77.31640625,79.2109375 -74.19931446,75.86383131 -71.23918887,72.44485859 -68.375,68.875 -64.55505989,64.11391522 -60.48561181,59.66226975 -56.31640625,55.2109375 -53.19931446,51.86383131 -50.23918887,48.44485859 -47.375,44.875 -43.55505989,40.11391522 -39.48561181,35.66226975 -35.31640625,31.2109375 -32.19931446,27.86383131 -29.23918887,24.44485859 -26.375,20.875 -22.90000754,16.56143532 -19.29276982,12.40493194 -15.5625,8.3125 -15.05847656,7.75175781 -14.55445313,7.19101563 -14.03515625,6.61328125 -9.47543488,1.66342329 -6.71265109,0.08540269 0,0z" />
-                                                    </DrawingGroup>
-                                                    <DrawingGroup Transform="1,0,0,1,16,352">
-                                                        <GeometryDrawing
-                                                            Brush="{StaticResource DefaultForegroundBrush}"
-                                                            Geometry="F1 M512,512z M0,0z M0,0C21.12,0 42.24,0 64,0 64,31.68 64,63.36 64,96 180.16,96 296.32,96 416,96 416,64.32 416,32.64 416,0 437.12,0 458.24,0 480,0 480.16121214,33.74259587 480.16121214,33.74259587 480.1953125,47.90429688 480.2190284,57.67480893 480.24687803,67.4451828 480.30175781,77.21557617 480.341711,84.33195909 480.36745301,91.44822968 480.37635398,98.56472164 480.38155445,102.3305506 480.39371875,106.0960583 480.42292023,109.86178398 480.45022386,113.41178625 480.45841521,116.96133725 480.45243073,120.51143456 480.4540428,122.42417556 480.47548706,124.33686827 480.49768066,126.2494812 480.46363808,133.41067616 479.60382887,138.77097269 476,145 475.62168156,145.65394965 475.24336311,146.3078993 474.85358047,146.98166561 470.64583866,153.8761477 463.61395111,157.84903253 456,160 453.51836188,160.17913945 451.02824268,160.25458313 448.54014874,160.25726891 447.80654461,160.26077498 447.07294048,160.26428105 446.31710592,160.26789337 443.85754299,160.27720134 441.39821715,160.27228565 438.93864441,160.26742554 437.15796459,160.2711621 435.37728642,160.27576364 433.59661084,160.28115618 428.70204379,160.2934008 423.80754501,160.29312399 418.91296613,160.29076743 413.63472079,160.29035964 408.35649745,160.30139482 403.07826233,160.31088257 392.73679102,160.3275014 382.3953425,160.33299251 372.05385896,160.33410732 363.64875477,160.33505735 355.2436581,160.33916536 346.83855629,160.34550858 323.01378006,160.36312315 299.18902185,160.37234707 275.36423906,160.37084763 274.0796139,160.37076772 272.79498874,160.3706878 271.47143555,160.37060547 270.18524377,160.37052371 268.89905199,160.37044195 267.5738847,160.37035771 246.72576738,160.36954467 225.87772228,160.38868615 205.02962586,160.4168822 183.62808244,160.44559862 162.22657425,160.45942319 140.82501107,160.45769465 128.80758223,160.45703033 116.79022911,160.46254088 104.77281761,160.48405075 94.54153925,160.50224614 84.31037093,160.50662334 74.07908341,160.4930319 68.85873778,160.48649409 63.63860338,160.48641454 58.41827774,160.5037384 53.63827426,160.51943795 48.85865005,160.51663731 44.078656,160.49917014 42.35055576,160.49609339 40.62242744,160.49975801 38.89436033,160.51089029 22.38350059,160.61019933 22.38350059,160.61019933 15,156 14.35112436,155.6217336 13.70224872,155.2434672 13.03371018,154.85373819 6.09131076,150.65396556 2.21396446,143.61288476 0,136 -0.24609566,133.13775063 -0.24609566,133.13775063 -0.24050903,130.11538696 -0.24325836,128.96281403 -0.24600769,127.81024109 -0.24884033,126.6227417 -0.24164978,125.37261292 -0.23445923,124.12248413 -0.22705078,122.83447266 -0.22648613,121.49370329 -0.22680428,120.15293331 -0.22793579,118.81216431 -0.22850821,115.18448153 -0.21677194,111.55693175 -0.20278788,107.9292798 -0.19026199,104.13363607 -0.18910855,100.33798909 -0.18673706,96.54232788 -0.18052775,89.36014021 -0.16412437,82.17801363 -0.14403808,74.99585283 -0.11747576,65.28676314 -0.106702,55.57765668 -0.09503365,45.86853981 -0.07624337,30.57898081 -0.03639406,15.2895507 0,0z" />
-                                                    </DrawingGroup>
-                                                </DrawingGroup>
-                                            </DrawingImage.Drawing>
-                                        </DrawingImage>
-                                    </Image.Source>
-                                </Image>
-                            </MenuItem.Icon>
-                        </MenuItem>
-                    </MenuItem>
-                </Menu>
-
-                <StackPanel Grid.Column="2"
-                            Orientation="Horizontal"
-                            HorizontalAlignment="Right">
-                    <Button Style="{StaticResource MinimizeButtonStyle}" />
-                    <Button Style="{StaticResource MaximizeButtonStyle}" />
-                    <Button Style="{StaticResource CloseWindowButtonStyle}" />
-                </StackPanel>
-
+            <Grid Margin="10, 0, 0, 0">
+                <Image Source="{StaticResource Logo}"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
+                       Width="25"
+                       Height="25" />
             </Grid>
 
-            <Grid Margin="0,5,0,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" MinWidth="350" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" MinWidth="400" />
-                </Grid.ColumnDefinitions>
-                
-                <Grid.Resources>
-                    <Style TargetType="ListBox">
+            <Menu Background="Transparent"
+                  Margin="3, 0, 0, 0"
+                  Grid.Column="1">
+                <Menu.Resources>
+
+                    <ControlTemplate x:Key="TopLevelMenuItemTemplate" TargetType="{x:Type MenuItem}">
+                        <Border x:Name="MenuItemBorder"
+                                Padding="{TemplateBinding Padding}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Background="{TemplateBinding Background}">
+                            <Grid VerticalAlignment="Center">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <ContentPresenter Content="{TemplateBinding Header}"
+                                                  ContentSource="Header"
+                                                  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                <Popup Grid.Column="0" AllowsTransparency="True"
+                                       IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                                       Placement="Bottom"
+                                       PlacementTarget="{Binding ElementName=MenuItemBorder}"
+                                       HorizontalOffset="1"
+                                       VerticalOffset="-1">
+                                    <Border BorderBrush="#414141"
+                                            Background="#414141">
+                                        <ScrollViewer
+                                            Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer, TypeInTargetAssembly={x:Type FrameworkElement}}}">
+                                            <ItemsPresenter
+                                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                        </ScrollViewer>
+                                    </Border>
+                                </Popup>
+                            </Grid>
+                        </Border>
+                    </ControlTemplate>
+
+                    <ControlTemplate x:Key="InnerMenuItemTemplate" TargetType="{x:Type MenuItem}">
+                        <Border x:Name="templateRoot"
+                                Margin="{TemplateBinding Margin}"
+                                Padding="{TemplateBinding Padding}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Background="{TemplateBinding Background}"
+                                SnapsToDevicePixels="True">
+                            <Grid Margin="-1"
+                                  Background="Transparent">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition MinWidth="22"
+                                                      SharedSizeGroup="MenuItemIconColumnGroup"
+                                                      Width="Auto" />
+                                    <ColumnDefinition Width="13" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="30" />
+                                    <ColumnDefinition SharedSizeGroup="MenuItemIGTColumnGroup"
+                                                      Width="Auto" />
+                                    <ColumnDefinition Width="20" />
+                                </Grid.ColumnDefinitions>
+                                <ContentPresenter x:Name="Icon" Content="{TemplateBinding Icon}"
+                                                  ContentSource="Icon" HorizontalAlignment="Center"
+                                                  Height="16" Margin="10, 3, 3, 3"
+                                                  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                                  VerticalAlignment="Center" Width="16" />
+                                <Border Grid.Column="0" x:Name="GlyphPanel"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="1"
+                                        Background="#3D26A0DA" ClipToBounds="False"
+                                        HorizontalAlignment="Center" Height="22" Margin="-1,0,0,0"
+                                        Visibility="Hidden" VerticalAlignment="Center" Width="22">
+                                    <Path x:Name="Glyph"
+                                          Data="F1M10,1.2L4.7,9.1 4.5,9.1 0,5.2 1.3,3.5 4.3,6.1 8.3,0 10,1.2z"
+                                          Fill="#FF212121" FlowDirection="LeftToRight" Height="11"
+                                          Width="10" />
+                                </Border>
+                                <ContentPresenter x:Name="menuHeaderContainer"
+                                                  ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                                  Content="{TemplateBinding Header}" Grid.Column="2"
+                                                  ContentStringFormat="{TemplateBinding HeaderStringFormat}"
+                                                  ContentSource="Header" HorizontalAlignment="Left"
+                                                  Margin="{TemplateBinding Padding}"
+                                                  RecognizesAccessKey="True"
+                                                  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                                  VerticalAlignment="Center" />
+                                <TextBlock x:Name="menuGestureText" Grid.Column="4"
+                                           Margin="{TemplateBinding Padding}" Opacity="0.7"
+                                           Text="{TemplateBinding InputGestureText}"
+                                           VerticalAlignment="Center" />
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="Icon" Value="{x:Null}">
+                                <Setter Property="Visibility" TargetName="Icon" Value="Collapsed" />
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter Property="Visibility" TargetName="GlyphPanel" Value="Visible" />
+                                <Setter Property="Visibility" TargetName="Icon" Value="Collapsed" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="TextElement.Foreground" TargetName="templateRoot"
+                                        Value="#FF707070" />
+                                <Setter Property="Fill" TargetName="Glyph" Value="#FF707070" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+
+                    <Style x:Key="InnerMenuItem" TargetType="MenuItem">
+                        <Setter Property="Foreground" Value="{StaticResource DefaultForegroundBrush}" />
+                        <Setter Property="FontWeight" Value="500" />
+                        <Setter Property="FontSize" Value="18" />
+                        <Setter Property="MinHeight" Value="40" />
+
+                        <Setter Property="Background" Value="{StaticResource HeaderBackgroundBrush}" />
+                        <Setter Property="Template" Value="{StaticResource InnerMenuItemTemplate}" />
+
+                        <Style.Triggers>
+                            <Trigger Property="IsHighlighted" Value="True">
+                                <Setter Property="Background" Value="{StaticResource DefaultItemSelectedBrush}" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+
+                    <Style x:Key="MainMenuItem" TargetType="MenuItem">
+                        <Setter Property="Foreground" Value="{StaticResource DefaultForegroundBrush}" />
+                        <Setter Property="FontWeight" Value="500" />
+                        <Setter Property="FontSize" Value="20" />
+                        <Setter Property="Padding" Value="8, 10, 8, 10" />
+
+                        <Setter Property="Template" Value="{StaticResource TopLevelMenuItemTemplate}" />
+
+                        <Style.Triggers>
+                            <Trigger Property="IsHighlighted" Value="True">
+                                <Setter Property="Background" Value="{StaticResource DefaultIsMouseOverBrush}" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Menu.Resources>
+
+                <MenuItem Style="{StaticResource MainMenuItem}" Header="Файл">
+                    <MenuItem
+                        Style="{StaticResource InnerMenuItem}"
+                        Command="{Binding UploadQuestionnairesCommand}"
+                        Header="Загрузить">
+                        <MenuItem.Icon>
+                            <Image>
+                                <Image.Source>
+                                    <DrawingImage>
+                                        <DrawingImage.Drawing>
+                                            <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
+                                                <DrawingGroup.Transform>
+                                                    <TranslateTransform X="97.933601379394531"
+                                                                        Y="0.03079843707382679" />
+                                                </DrawingGroup.Transform>
+                                                <DrawingGroup Transform="1,0,0,1,225.5625,-0.517578125">
+                                                    <GeometryDrawing
+                                                        Brush="{StaticResource DefaultForegroundBrush}"
+                                                        Geometry="F1 M512,512z M0,0z M0,0C0.73250977,-0.00700928 1.46501953,-0.01401855 2.21972656,-0.02124023 4.62604382,-0.03875584 7.03117209,-0.02722142 9.4375,-0.01367188 11.11849186,-0.01636866 12.79948221,-0.02025264 14.48046875,-0.02526855 17.99754743,-0.03115485 21.5142188,-0.02262896 25.03125,-0.00390625 29.53052189,0.01888312 34.02883927,0.00575532 38.52807617,-0.01819611 41.99746847,-0.03267779 45.46663594,-0.02803731 48.93603516,-0.01768494 50.59456496,-0.01502418 52.25311544,-0.01826444 53.91162109,-0.02760315 56.23329421,-0.03780834 58.55344011,-0.02221466 60.875,0 62.19371094,0.00318237 63.51242187,0.00636475 64.87109375,0.00964355 70.2634298,0.77763063 73.15061472,2.96051062 76.58102036,7.11113167 78.9340868,11.42876309 78.98752291,14.53546036 78.91851807,19.3633728 78.92193577,20.24237956 78.92535347,21.12138631 78.92887473,22.02702963 78.9354521,24.96610768 78.91347983,27.90426811 78.89160156,30.84326172 78.89047305,32.95249408 78.89110701,35.06172802 78.89337158,37.17095947 78.89451952,42.89369985 78.87099696,48.61610506 78.84307575,54.33876753 78.8180756,60.32052379 78.81572118,66.30228769 78.81097412,72.28408813 78.79854031,83.60998879 78.76571306,94.93573505 78.72557616,106.26156771 78.6808712,119.15624023 78.65887459,132.0509201 78.63879442,144.94565082 78.59698091,171.46971219 78.52662082,197.99363651 78.4375,224.51757812 79.30114166,224.50869568 80.16478333,224.49981323 81.05459595,224.49066162 89.2054158,224.41041473 97.35610241,224.34956248 105.50722694,224.31032944 109.69753538,224.28948094 113.88751659,224.26121396 118.07763672,224.21582031 122.12362242,224.17226393 126.16929395,224.14842042 130.21549606,224.13806915 131.75684935,224.13069526 133.29818602,224.11629555 134.83940506,224.0946579 137.00349936,224.06549202 139.16630625,224.06162737 141.33056641,224.06347656 142.56078522,224.05459412 143.79100403,224.04571167 145.0585022,224.03656006 150.52493438,224.81473536 153.52966979,227.3230647 156.8125,231.64257812 159.1103474,236.14172472 159.19789882,240.58699207 158.4375,245.51757812 156.07084786,251.27986161 152.05599392,255.31745766 147.8515625,259.85742188 145.50394777,262.44435656 143.30785802,265.10349002 141.125,267.83007812 137.23429292,272.64423401 133.10749534,277.16682146 128.87963867,281.6809082 125.76225274,285.02822055 122.80190833,288.447446 119.9375,292.01757812 116.11755989,296.7786629 112.04811181,301.23030838 107.87890625,305.68164062 104.76181446,309.02874682 101.80168887,312.44771953 98.9375,316.01757812 95.11755989,320.7786629 91.04811181,325.23030838 86.87890625,329.68164062 83.76181446,333.02874682 80.80168887,336.44771953 77.9375,340.01757812 74.11755989,344.7786629 70.04811181,349.23030838 65.87890625,353.68164062 62.76181446,357.02874682 59.80168887,360.44771953 56.9375,364.01757812 53.46250754,368.33114281 49.85526982,372.48764619 46.125,376.58007812 45.62097656,377.14082031 45.11695313,377.7015625 44.59765625,378.27929688 41.09197692,382.08492738 38.79166809,384.23560256 33.6328125,384.85351562 32.61960937,384.86640625 31.60640625,384.87929688 30.5625,384.89257812 29.55445313,384.9209375 28.54640625,384.94929688 27.5078125,384.97851562 21.13915805,384.0224072 17.26994888,379.56671754 13.125,374.95507812 12.6498999,374.42841553 12.1747998,373.90175293 11.68530273,373.35913086 7.91521601,369.14483643 4.36002131,364.77098118 0.81640625,360.36523438 -2.3597857,356.56319179 -5.73520822,352.9685406 -9.12084961,349.35375977 -13.0224667,345.16428287 -16.63574797,340.79584877 -20.21875,336.33007812 -22.89458171,333.11908007 -25.70608276,330.06728676 -28.5625,327.01757812 -33.00082674,322.27891348 -37.1539225,317.39638487 -41.21875,312.33007812 -43.89458171,309.11908007 -46.70608276,306.06728676 -49.5625,303.01757812 -54.00082674,298.27891348 -58.1539225,293.39638487 -62.21875,288.33007812 -64.89458492,285.11907622 -67.70612569,282.0673318 -70.5625,279.01757812 -75.05536855,274.21938958 -79.28513262,269.2852676 -83.39453125,264.15039062 -86.32160307,260.59571242 -89.45106069,257.24631962 -92.6171875,253.90429688 -96.78486712,248.79093894 -98.13392989,244.45239895 -97.91015625,237.98242188 -97.18257514,232.82395357 -94.95303485,229.63182003 -90.85824585,226.35064697 -87.0377116,224.2256948 -84.80002844,224.03210861 -80.45556641,224.06347656 -79.43012726,224.0626004 -79.43012726,224.0626004 -78.38397217,224.06170654 -76.14347025,224.06447442 -73.90432949,224.09550132 -71.6640625,224.12695312 -70.10322801,224.13442021 -68.54238411,224.14011094 -66.98153687,224.144104 -62.88781522,224.15932372 -58.79466778,224.19857305 -54.70117188,224.24291992 -50.51830817,224.28395229 -46.33535102,224.30213195 -42.15234375,224.32226562 -33.95546665,224.36507165 -25.7590549,224.43327758 -17.5625,224.51757812 -17.56618717,223.42021017 -17.56987434,222.32284222 -17.57367325,221.19222069 -17.66243516,194.50219472 -17.72818577,167.81218787 -17.76974869,141.12204552 -17.79038197,128.21493665 -17.81851735,115.30792523 -17.86425781,102.40087891 -17.90410195,91.15230578 -17.92992724,79.90380323 -17.93885398,68.6551615 -17.94407279,62.6979808 -17.95635511,56.741002 -17.98542023,50.78388596 -18.01255084,45.17789306 -18.02094965,39.57218543 -18.01493073,33.96613312 -18.01603201,31.90778936 -18.02399973,29.84943616 -18.0393219,27.79114914 -18.05921274,24.98153924 -18.05444231,22.17300746 -18.04351807,19.3633728 -18.05516943,18.54818692 -18.0668208,17.73300103 -18.07882524,16.89311254 -18.02359732,11.64095119 -17.01610737,8.69627212 -13.5625,4.51757812 -9.03823413,0.70142191 -5.8581698,0.0141372 0,0z" />
+                                                </DrawingGroup>
+                                                <DrawingGroup Transform="1,0,0,1,16,352">
+                                                    <GeometryDrawing
+                                                        Brush="{StaticResource DefaultForegroundBrush}"
+                                                        Geometry="F1 M512,512z M0,0z M0,0C21.12,0 42.24,0 64,0 64,31.68 64,63.36 64,96 180.16,96 296.32,96 416,96 416,64.32 416,32.64 416,0 437.12,0 458.24,0 480,0 480.16121214,33.74259587 480.16121214,33.74259587 480.1953125,47.90429688 480.2190284,57.67480893 480.24687803,67.4451828 480.30175781,77.21557617 480.341711,84.33195909 480.36745301,91.44822968 480.37635398,98.56472164 480.38155445,102.3305506 480.39371875,106.0960583 480.42292023,109.86178398 480.45022386,113.41178625 480.45841521,116.96133725 480.45243073,120.51143456 480.4540428,122.42417556 480.47548706,124.33686827 480.49768066,126.2494812 480.46363808,133.41067616 479.60382887,138.77097269 476,145 475.62168156,145.65394965 475.24336311,146.3078993 474.85358047,146.98166561 470.64583866,153.8761477 463.61395111,157.84903253 456,160 453.51836188,160.17913945 451.02824268,160.25458313 448.54014874,160.25726891 447.80654461,160.26077498 447.07294048,160.26428105 446.31710592,160.26789337 443.85754299,160.27720134 441.39821715,160.27228565 438.93864441,160.26742554 437.15796459,160.2711621 435.37728642,160.27576364 433.59661084,160.28115618 428.70204379,160.2934008 423.80754501,160.29312399 418.91296613,160.29076743 413.63472079,160.29035964 408.35649745,160.30139482 403.07826233,160.31088257 392.73679102,160.3275014 382.3953425,160.33299251 372.05385896,160.33410732 363.64875477,160.33505735 355.2436581,160.33916536 346.83855629,160.34550858 323.01378006,160.36312315 299.18902185,160.37234707 275.36423906,160.37084763 274.0796139,160.37076772 272.79498874,160.3706878 271.47143555,160.37060547 270.18524377,160.37052371 268.89905199,160.37044195 267.5738847,160.37035771 246.72576738,160.36954467 225.87772228,160.38868615 205.02962586,160.4168822 183.62808244,160.44559862 162.22657425,160.45942319 140.82501107,160.45769465 128.80758223,160.45703033 116.79022911,160.46254088 104.77281761,160.48405075 94.54153925,160.50224614 84.31037093,160.50662334 74.07908341,160.4930319 68.85873778,160.48649409 63.63860338,160.48641454 58.41827774,160.5037384 53.63827426,160.51943795 48.85865005,160.51663731 44.078656,160.49917014 42.35055576,160.49609339 40.62242744,160.49975801 38.89436033,160.51089029 22.38350059,160.61019933 22.38350059,160.61019933 15,156 14.35112436,155.6217336 13.70224872,155.2434672 13.03371018,154.85373819 6.09131076,150.65396556 2.21396446,143.61288476 0,136 -0.24609566,133.13775063 -0.24609566,133.13775063 -0.24050903,130.11538696 -0.24325836,128.96281403 -0.24600769,127.81024109 -0.24884033,126.6227417 -0.24164978,125.37261292 -0.23445923,124.12248413 -0.22705078,122.83447266 -0.22648613,121.49370329 -0.22680428,120.15293331 -0.22793579,118.81216431 -0.22850821,115.18448153 -0.21677194,111.55693175 -0.20278788,107.9292798 -0.19026199,104.13363607 -0.18910855,100.33798909 -0.18673706,96.54232788 -0.18052775,89.36014021 -0.16412437,82.17801363 -0.14403808,74.99585283 -0.11747576,65.28676314 -0.106702,55.57765668 -0.09503365,45.86853981 -0.07624337,30.57898081 -0.03639406,15.2895507 0,0z" />
+                                                </DrawingGroup>
+                                            </DrawingGroup>
+                                        </DrawingImage.Drawing>
+                                    </DrawingImage>
+                                </Image.Source>
+                            </Image>
+                        </MenuItem.Icon>
+                    </MenuItem>
+
+                    <MenuItem Style="{StaticResource InnerMenuItem}"
+                              Command="{Binding ExportQuestionnairesCommand}"
+                              Header="Экспортировать">
+                        <MenuItem.Icon>
+                            <Image>
+                                <Image.Source>
+                                    <DrawingImage>
+                                        <DrawingImage.Drawing>
+                                            <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
+                                                <DrawingGroup.Transform>
+                                                    <TranslateTransform X="128.30339050292969" Y="0.0859375" />
+                                                </DrawingGroup.Transform>
+                                                <DrawingGroup Transform="1,0,0,1,255.875,-0.375">
+                                                    <GeometryDrawing
+                                                        Brush="{StaticResource DefaultForegroundBrush}"
+                                                        Geometry="F1 M512,512z M0,0z M0,0C1.00804687,-0.02835938 2.01609375,-0.05671875 3.0546875,-0.0859375 9.42334195,0.87017093 13.29255112,5.32586058 17.4375,9.9375 17.9126001,10.4641626 18.3877002,10.9908252 18.87719727,11.53344727 22.64728399,15.74774169 26.20247869,20.12159694 29.74609375,24.52734375 32.9222857,28.32938633 36.29770822,31.92403752 39.68334961,35.53881836 43.5849667,39.72829526 47.19824797,44.09672936 50.78125,48.5625 53.45708171,51.77349805 56.26858276,54.82529137 59.125,57.875 63.56332674,62.61366464 67.7164225,67.49619326 71.78125,72.5625 74.45708171,75.77349805 77.26858276,78.82529137 80.125,81.875 84.56332674,86.61366464 88.7164225,91.49619326 92.78125,96.5625 95.45708492,99.77350191 98.26862569,102.82524633 101.125,105.875 105.61786855,110.67318854 109.84763262,115.60731053 113.95703125,120.7421875 116.88410307,124.29686571 120.01356069,127.64625851 123.1796875,130.98828125 127.34736712,136.10163918 128.69642989,140.44017918 128.47265625,146.91015625 127.74507514,152.06862455 125.51553485,155.2607581 121.42074585,158.54193115 117.6002116,160.66688333 115.36252844,160.86046952 111.01806641,160.82910156 110.33444031,160.82968567 109.65081421,160.83026978 108.94647217,160.83087158 106.70597025,160.82810371 104.46682949,160.79707681 102.2265625,160.765625 100.66572801,160.75815791 99.10488411,160.75246719 97.54403687,160.74847412 93.45031522,160.73325441 89.35716778,160.69400507 85.26367188,160.6496582 81.08080817,160.60862584 76.89785102,160.59044617 72.71484375,160.5703125 64.51796665,160.52750648 56.3215549,160.45930054 48.125,160.375 48.12868717,161.47236795 48.13237434,162.56973591 48.13617325,163.70035744 48.22493516,190.39038341 48.29068577,217.08039026 48.33224869,243.77053261 48.35288197,256.67764148 48.38101735,269.58465289 48.42675781,282.49169922 48.46660195,293.74027234 48.49242724,304.9887749 48.50135398,316.23741663 48.50657279,322.19459732 48.51885511,328.15157612 48.54792023,334.10869217 48.57505084,339.71468506 48.58344965,345.3203927 48.57743073,350.92644501 48.57853201,352.98478876 48.58649973,355.04314196 48.6018219,357.10142899 48.62171274,359.91103889 48.61694231,362.71957066 48.60601807,365.52920532 48.61766943,366.34439121 48.6293208,367.1595771 48.64132524,367.99946558 48.58609732,373.25162694 47.57860737,376.196306 44.125,380.375 39.60073413,384.19115622 36.4206698,384.87844092 30.5625,384.89257812 29.46373535,384.90309204 29.46373535,384.90309204 28.34277344,384.91381836 25.93645618,384.93133397 23.53132791,384.91979954 21.125,384.90625 19.44400814,384.90894679 17.76301779,384.91283077 16.08203125,384.91784668 12.56495257,384.92373298 9.0482812,384.91520709 5.53125,384.89648438 1.03197811,384.87369501 -3.46633927,384.8868228 -7.96557617,384.91077423 -11.43496847,384.92525591 -14.90413594,384.92061544 -18.37353516,384.91026306 -20.03206496,384.90760231 -21.69061544,384.91084257 -23.34912109,384.92018127 -25.67079421,384.93038646 -27.99094011,384.91479279 -30.3125,384.89257812 -31.63121094,384.88939575 -32.94992188,384.88621338 -34.30859375,384.88293457 -39.7009298,384.1149475 -42.58811472,381.9320675 -46.01852036,377.78144646 -48.3715868,373.46381504 -48.42502291,370.35711777 -48.35601807,365.52920532 -48.35943577,364.65019857 -48.36285347,363.77119181 -48.36637473,362.86554849 -48.3729521,359.92647045 -48.35097983,356.98831001 -48.32910156,354.04931641 -48.32797305,351.94008404 -48.32860701,349.8308501 -48.33087158,347.72161865 -48.33201952,341.99887828 -48.30849696,336.27647306 -48.28057575,330.5538106 -48.2555756,324.57205433 -48.25322118,318.59029044 -48.24847412,312.60848999 -48.23604031,301.28258934 -48.20321306,289.95684307 -48.16307616,278.63101041 -48.1183712,265.7363379 -48.09637459,252.84165802 -48.07629442,239.94692731 -48.03448091,213.42286594 -47.96412082,186.89894162 -47.875,160.375 -48.73864166,160.38388245 -49.60228333,160.39276489 -50.49209595,160.4019165 -58.6429158,160.48216339 -66.79360241,160.54301565 -74.94472694,160.58224869 -79.13503538,160.60309718 -83.32501659,160.63136416 -87.51513672,160.67675781 -91.56112242,160.72031419 -95.60679395,160.7441577 -99.65299606,160.75450897 -101.19434935,160.76188286 -102.73568602,160.77628257 -104.27690506,160.79792023 -106.44099936,160.82708611 -108.60380625,160.83095076 -110.76806641,160.82910156 -111.99828522,160.83798401 -113.22850403,160.84686646 -114.4960022,160.85601807 -119.96243438,160.07784276 -122.96716979,157.56951343 -126.25,153.25 -128.5478474,148.75085341 -128.63539882,144.30558606 -127.875,139.375 -125.50834786,133.61271652 -121.49349392,129.57512047 -117.2890625,125.03515625 -114.94144777,122.44822157 -112.74535802,119.7890881 -110.5625,117.0625 -106.67179292,112.24834412 -102.54499534,107.72575666 -98.31713867,103.21166992 -95.19975274,99.86435757 -92.23940833,96.44513212 -89.375,92.875 -85.55505989,88.11391522 -81.48561181,83.66226975 -77.31640625,79.2109375 -74.19931446,75.86383131 -71.23918887,72.44485859 -68.375,68.875 -64.55505989,64.11391522 -60.48561181,59.66226975 -56.31640625,55.2109375 -53.19931446,51.86383131 -50.23918887,48.44485859 -47.375,44.875 -43.55505989,40.11391522 -39.48561181,35.66226975 -35.31640625,31.2109375 -32.19931446,27.86383131 -29.23918887,24.44485859 -26.375,20.875 -22.90000754,16.56143532 -19.29276982,12.40493194 -15.5625,8.3125 -15.05847656,7.75175781 -14.55445313,7.19101563 -14.03515625,6.61328125 -9.47543488,1.66342329 -6.71265109,0.08540269 0,0z" />
+                                                </DrawingGroup>
+                                                <DrawingGroup Transform="1,0,0,1,16,352">
+                                                    <GeometryDrawing
+                                                        Brush="{StaticResource DefaultForegroundBrush}"
+                                                        Geometry="F1 M512,512z M0,0z M0,0C21.12,0 42.24,0 64,0 64,31.68 64,63.36 64,96 180.16,96 296.32,96 416,96 416,64.32 416,32.64 416,0 437.12,0 458.24,0 480,0 480.16121214,33.74259587 480.16121214,33.74259587 480.1953125,47.90429688 480.2190284,57.67480893 480.24687803,67.4451828 480.30175781,77.21557617 480.341711,84.33195909 480.36745301,91.44822968 480.37635398,98.56472164 480.38155445,102.3305506 480.39371875,106.0960583 480.42292023,109.86178398 480.45022386,113.41178625 480.45841521,116.96133725 480.45243073,120.51143456 480.4540428,122.42417556 480.47548706,124.33686827 480.49768066,126.2494812 480.46363808,133.41067616 479.60382887,138.77097269 476,145 475.62168156,145.65394965 475.24336311,146.3078993 474.85358047,146.98166561 470.64583866,153.8761477 463.61395111,157.84903253 456,160 453.51836188,160.17913945 451.02824268,160.25458313 448.54014874,160.25726891 447.80654461,160.26077498 447.07294048,160.26428105 446.31710592,160.26789337 443.85754299,160.27720134 441.39821715,160.27228565 438.93864441,160.26742554 437.15796459,160.2711621 435.37728642,160.27576364 433.59661084,160.28115618 428.70204379,160.2934008 423.80754501,160.29312399 418.91296613,160.29076743 413.63472079,160.29035964 408.35649745,160.30139482 403.07826233,160.31088257 392.73679102,160.3275014 382.3953425,160.33299251 372.05385896,160.33410732 363.64875477,160.33505735 355.2436581,160.33916536 346.83855629,160.34550858 323.01378006,160.36312315 299.18902185,160.37234707 275.36423906,160.37084763 274.0796139,160.37076772 272.79498874,160.3706878 271.47143555,160.37060547 270.18524377,160.37052371 268.89905199,160.37044195 267.5738847,160.37035771 246.72576738,160.36954467 225.87772228,160.38868615 205.02962586,160.4168822 183.62808244,160.44559862 162.22657425,160.45942319 140.82501107,160.45769465 128.80758223,160.45703033 116.79022911,160.46254088 104.77281761,160.48405075 94.54153925,160.50224614 84.31037093,160.50662334 74.07908341,160.4930319 68.85873778,160.48649409 63.63860338,160.48641454 58.41827774,160.5037384 53.63827426,160.51943795 48.85865005,160.51663731 44.078656,160.49917014 42.35055576,160.49609339 40.62242744,160.49975801 38.89436033,160.51089029 22.38350059,160.61019933 22.38350059,160.61019933 15,156 14.35112436,155.6217336 13.70224872,155.2434672 13.03371018,154.85373819 6.09131076,150.65396556 2.21396446,143.61288476 0,136 -0.24609566,133.13775063 -0.24609566,133.13775063 -0.24050903,130.11538696 -0.24325836,128.96281403 -0.24600769,127.81024109 -0.24884033,126.6227417 -0.24164978,125.37261292 -0.23445923,124.12248413 -0.22705078,122.83447266 -0.22648613,121.49370329 -0.22680428,120.15293331 -0.22793579,118.81216431 -0.22850821,115.18448153 -0.21677194,111.55693175 -0.20278788,107.9292798 -0.19026199,104.13363607 -0.18910855,100.33798909 -0.18673706,96.54232788 -0.18052775,89.36014021 -0.16412437,82.17801363 -0.14403808,74.99585283 -0.11747576,65.28676314 -0.106702,55.57765668 -0.09503365,45.86853981 -0.07624337,30.57898081 -0.03639406,15.2895507 0,0z" />
+                                                </DrawingGroup>
+                                            </DrawingGroup>
+                                        </DrawingImage.Drawing>
+                                    </DrawingImage>
+                                </Image.Source>
+                            </Image>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </MenuItem>
+            </Menu>
+
+            <StackPanel Grid.Column="2"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Right">
+                <Button Style="{StaticResource MinimizeButtonStyle}" />
+                <Button Style="{StaticResource MaximizeButtonStyle}" />
+                <Button Style="{StaticResource CloseWindowButtonStyle}" />
+            </StackPanel>
+
+        </Grid>
+
+        <Border BorderThickness="3"
+                Grid.Row="1"
+                Visibility="{Binding UploadedQuestionnaires, Converter={StaticResource InverseNullVisibilityConverter}}"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                MinHeight="250"
+                CornerRadius="4"
+                MinWidth="450">
+            <Border.BorderBrush>
+                <DrawingBrush Viewport="0,0,8,8" ViewportUnits="Absolute" TileMode="Tile">
+                    <DrawingBrush.Drawing>
+                        <DrawingGroup>
+                            <GeometryDrawing Brush="{StaticResource DefaultIsMouseOverBrush}">
+                                <GeometryDrawing.Geometry>
+                                    <GeometryGroup>
+                                        <RectangleGeometry Rect="0,0,50,50" />
+                                        <RectangleGeometry Rect="50,50,50,50" />
+                                    </GeometryGroup>
+                                </GeometryDrawing.Geometry>
+                            </GeometryDrawing>
+                        </DrawingGroup>
+                    </DrawingBrush.Drawing>
+                </DrawingBrush>
+            </Border.BorderBrush>
+
+            <StackPanel HorizontalAlignment="Center"
+                        VerticalAlignment="Center">
+                <Button
+                    Margin="0,10,0,0"
+                    Command="{Binding SelectFilesCommand}"
+                    HorizontalAlignment="Center"
+                    Style="{StaticResource SelectFilesButtonStyle}">
+                    <StackPanel Orientation="Horizontal">
+                        <Image
+                            Width="30"
+                            Height="30"
+                            Source="{StaticResource SelectFilesIcon}"
+                            Stretch="Fill" />
+                        <TextBlock
+                            Margin="7, 0, 0, 0"
+                            VerticalAlignment="Center"
+                            FontSize="16"
+                            Text="Выбрать файлы"
+                            TextDecorations="Underline" />
+                    </StackPanel>
+                </Button>
+
+                <TextBlock Text="Выберите или перенесите файлы для считывания."
+                           FontSize="14"
+                           Foreground="{StaticResource DefaultIsMouseOverBrush}" />
+            </StackPanel>
+
+        </Border>
+
+        <Grid Margin="0,5,0,0"
+              Grid.Row="1"
+              Visibility="{Binding UploadedQuestionnaires, Converter={StaticResource NullVisibilityConverter}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" MinWidth="350" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" MinWidth="400" />
+            </Grid.ColumnDefinitions>
+
+            <Grid.Resources>
+                <Style TargetType="ListBox">
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListBox">
+                                <Border Background="{TemplateBinding Background}">
+                                    <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                                                  VerticalScrollBarVisibility="Auto">
+                                        <ItemsPresenter />
+                                    </ScrollViewer>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Grid.Resources>
+
+            <ListBox
+                Margin="5, 0, 0, 0"
+                BorderThickness="0"
+                ItemsSource="{Binding UploadedQuestionnaires}"
+                SelectedItem="{Binding SelectedQuestionnaire}"
+                SelectionMode="Single">
+                <ListBox.Resources>
+                    <Style TargetType="{x:Type ListBoxItem}">
                         <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="BorderThickness" Value="3" />
+                        <Setter Property="Foreground" Value="{StaticResource DefaultForegroundBrush}" />
+                        <Setter Property="BorderBrush" Value="{StaticResource DefaultIsMouseOverBrush}" />
+                        <Setter Property="Margin" Value="0,0,0,5" />
                         <Setter Property="Template">
                             <Setter.Value>
-                                <ControlTemplate TargetType="ListBox">
-                                    <Border Background="{TemplateBinding Background}">
-                                        <ScrollViewer HorizontalScrollBarVisibility="Auto"
-                                                      VerticalScrollBarVisibility="Auto">
-                                            <ItemsPresenter />
-                                        </ScrollViewer>
+                                <ControlTemplate TargetType="ListBoxItem">
+                                    <Border
+                                        Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        CornerRadius="3">
+                                        <Border.Effect>
+                                            <DropShadowEffect Color="Black" Direction="270"
+                                                              BlurRadius="5"
+                                                              ShadowDepth="3"
+                                                              Opacity="0.5" />
+                                        </Border.Effect>
+                                        <ContentPresenter />
                                     </Border>
                                 </ControlTemplate>
                             </Setter.Value>
                         </Setter>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{StaticResource DefaultIsMouseOverBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="{StaticResource DefaultIsMouseOverBrush}" />
+                            </Trigger>
+                        </Style.Triggers>
                     </Style>
-                </Grid.Resources>
+                </ListBox.Resources>
 
-                <ListBox
-                    Margin="5, 0, 0, 0"
-                    BorderThickness="0"
-                    ItemsSource="{Binding UploadedQuestionnaires}"
-                    SelectedItem="{Binding SelectedQuestionnaire}"
-                    SelectionMode="Single">
-                    <ListBox.Resources>
-                        <Style TargetType="{x:Type ListBoxItem}">
-                            <Setter Property="Background" Value="Transparent" />
-                            <Setter Property="BorderThickness" Value="3" />
-                            <Setter Property="Foreground" Value="{StaticResource DefaultForegroundBrush}" />
-                            <Setter Property="BorderBrush" Value="{StaticResource DefaultIsMouseOverBrush}" />
-                            <Setter Property="Margin" Value="0,0,0,5" />
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="ListBoxItem">
-                                        <Border
-                                            Background="{TemplateBinding Background}"
-                                            BorderBrush="{TemplateBinding BorderBrush}"
-                                            BorderThickness="{TemplateBinding BorderThickness}"
-                                            CornerRadius="3">
-                                            <Border.Effect>
-                                                <DropShadowEffect Color="Black" Direction="270"
-                                                                  BlurRadius="5"
-                                                                  ShadowDepth="3"
-                                                                  Opacity="0.5" />
-                                            </Border.Effect>
-                                            <ContentPresenter />
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Margin="15,15,15,10">
+                            <StackPanel.Resources>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="FontSize" Value="16" />
+                                </Style>
+                            </StackPanel.Resources>
+                            <TextBlock
+                                FontWeight="500"
+                                Text="{Binding FilePath}"
+                                TextDecorations="Underline" />
+                            <TextBlock Margin="0, 10, 0, 0"
+                                       Text="{Binding Questions.Count, StringFormat='Количество вопросов: {0}'}" />
+                            <TextBlock Margin="0, 10, 0, 0"
+                                       Text="{Binding Type.DisplayName, StringFormat='Тип опросника: {0}'}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <GridSplitter Grid.Column="1"
+                          Width="1"
+                          Margin="5, 0, 0, 0"
+                          ResizeBehavior="PreviousAndNext"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch"
+                          Background="Black" />
+
+            <TabControl
+                Grid.Column="2"
+                Margin="5,0,0,0"
+                Padding="10"
+                Background="{StaticResource MainWindowBackgroundBrush}"
+                Visibility="{Binding SelectedQuestionnaire, Converter={StaticResource NullVisibilityConverter}}"
+                BorderThickness="0">
+
+                <TabControl.Resources>
+                    <Style TargetType="TabItem">
+                        <Setter Property="Foreground" Value="{StaticResource DefaultForegroundBrush}" />
+                        <Setter Property="FontWeight" Value="500" />
+                        <Setter Property="FontSize" Value="16" />
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="TabItem">
+                                    <Grid>
+                                        <Border Padding="20, 10, 20, 10">
+                                            <ContentPresenter
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Center"
+                                                ContentSource="Header" />
                                         </Border>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                            <Style.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Background" Value="{StaticResource DefaultIsMouseOverBrush}" />
-                                </Trigger>
-                                <Trigger Property="IsSelected" Value="True">
-                                    <Setter Property="Background" Value="{StaticResource DefaultIsMouseOverBrush}" />
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </ListBox.Resources>
 
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Margin="15,15,15,10">
-                                <StackPanel.Resources>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="FontSize" Value="16" />
-                                    </Style>
-                                </StackPanel.Resources>
-                                <TextBlock
-                                    FontWeight="500"
-                                    Text="{Binding FilePath}"
-                                    TextDecorations="Underline" />
-                                <TextBlock Margin="0, 10, 0, 0"
-                                           Text="{Binding Questions.Count, StringFormat='Количество вопросов: {0}'}" />
-                                <TextBlock Margin="0, 10, 0, 0"
-                                           Text="{Binding Type.DisplayName, StringFormat='Тип опросника: {0}'}" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+                                        <Border x:Name="Underline"
+                                                Height="5"
+                                                Background="Transparent"
+                                                VerticalAlignment="Bottom" />
+                                    </Grid>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter TargetName="Underline"
+                                                    Property="Background"
+                                                    Value="{StaticResource DefaultItemSelectedBrush}" />
+                                            <Setter Property="Foreground"
+                                                    Value="{StaticResource DefaultForegroundBrush}" />
+                                            <Setter Property="FontWeight" Value="700" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </TabControl.Resources>
 
-                <GridSplitter Grid.Column="1"
-                              Width="1"
-                              Margin="5, 0, 0, 0"
-                              ResizeBehavior="PreviousAndNext"
-                              HorizontalAlignment="Stretch"
-                              VerticalAlignment="Stretch"
-                              Background="Black" />
+                <TabItem Header="Список вопросов">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
 
-                <TabControl
-                    Grid.Column="2"
-                    Margin="5,0,0,0"
-                    Padding="10"
-                    Background="{StaticResource MainWindowBackgroundBrush}"
-                    BorderThickness="0"
-                    Visibility="{Binding SelectedQuestionnaire, Converter={StaticResource NullVisibilityConverter}}">
+                        <TextBox
+                            Margin="0, 5, 0, 0"
+                            Style="{StaticResource DefaultTextBoxStyle}"
+                            VerticalAlignment="Center"
+                            Text="{Binding SelectedQuestionnaire.Name, UpdateSourceTrigger=PropertyChanged}"
+                            FontSize="16" />
 
-                    <TabControl.Resources>
-                        <Style TargetType="TabItem">
-                            <Setter Property="Foreground" Value="{StaticResource DefaultForegroundBrush}" />
-                            <Setter Property="FontWeight" Value="500" />
-                            <Setter Property="FontSize" Value="16" />
-                            <Setter Property="Background" Value="Transparent" />
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="TabItem">
-                                        <Grid>
-                                            <Border Padding="20, 10, 20, 10">
-                                                <ContentPresenter
-                                                    VerticalAlignment="Center"
-                                                    HorizontalAlignment="Center"
-                                                    ContentSource="Header" />
-                                            </Border>
+                        <DataGrid Grid.Row="1"
+                                  Background="{StaticResource MainWindowBackgroundBrush}"
+                                  Margin="0,10,0,0"
+                                  FontSize="16"
+                                  ColumnWidth="*"
+                                  Foreground="{StaticResource DefaultForegroundBrush}"
+                                  ItemsSource="{Binding SelectedQuestionnaire.Questions}">
+                            <DataGrid.Resources>
 
-                                            <Border x:Name="Underline"
-                                                    Height="5"
-                                                    Background="Transparent"
-                                                    VerticalAlignment="Bottom" />
-                                        </Grid>
-                                        <ControlTemplate.Triggers>
-                                            <Trigger Property="IsSelected" Value="True">
-                                                <Setter TargetName="Underline"
-                                                        Property="Background"
-                                                        Value="{StaticResource DefaultItemSelectedBrush}" />
-                                                <Setter Property="Foreground"
-                                                        Value="{StaticResource DefaultForegroundBrush}" />
-                                                <Setter Property="FontWeight" Value="700" />
-                                            </Trigger>
-                                        </ControlTemplate.Triggers>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </TabControl.Resources>
+                                <Style TargetType="MenuItem">
+                                    <Setter Property="Foreground" Value="{StaticResource DefaultForegroundBrush}" />
+                                    <Setter Property="FontWeight" Value="450" />
+                                    <Setter Property="FontSize" Value="14" />
+                                    <Setter Property="MinHeight" Value="35" />
+                                    <Setter Property="BorderThickness" Value="0, 0, 0, 1" />
+                                    <Setter Property="BorderBrush" Value="{StaticResource DefaultIsMouseOverBrush}" />
 
-                    <TabItem Header="Список вопросов">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
-                            <TextBox
-                                Style="{StaticResource DefaultTextBoxStyle}"
-                                Text="{Binding SelectedQuestionnaire.Name, UpdateSourceTrigger=PropertyChanged}"
-                                FontSize="16"
-                                Margin="0, 5, 0, 0" />
-                            <DataGrid Grid.Row="1"
-                                      Background="{StaticResource MainWindowBackgroundBrush}"
-                                      Margin="0,10,0,0"
-                                      FontSize="16"
-                                      ColumnWidth="*"
-                                      Foreground="{StaticResource DefaultForegroundBrush}"
-                                      ItemsSource="{Binding SelectedQuestionnaire.Questions}">
-                                <DataGrid.Columns>
-                                    <DataGridTextColumn
-                                        MinWidth="40"
-                                        MaxWidth="40"
-                                        IsReadOnly="True"
-                                        Binding="{Binding Number}"
-                                        ElementStyle="{StaticResource TextCenteredTextBlockStyle}"
-                                        Header="№" />
-                                    <DataGridTextColumn
-                                        MinWidth="300"
-                                        IsReadOnly="True"
-                                        ElementStyle="{StaticResource TextWrappedTextBlockStyle}"
-                                        Binding="{Binding Text}"
-                                        Header="Текст вопроса" />
-                                    
-                                    <DataGridTemplateColumn Header="Ответ"
-                                                            MinWidth="100"
-                                                            MaxWidth="150">
-                                        <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Style="{StaticResource TextCenteredTextBlockStyle}"
-                                                           Text="{Binding Answer.DisplayName}" />
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellTemplate>
+                                    <Setter Property="Background" Value="{StaticResource HeaderBackgroundBrush}" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type MenuItem}">
+                                                <Border x:Name="templateRoot"
+                                                        Margin="{TemplateBinding Margin}"
+                                                        Padding="{TemplateBinding Padding}"
+                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                                        Background="{TemplateBinding Background}"
+                                                        SnapsToDevicePixels="True"
+                                                        ClipToBounds="True">
+                                                    <Grid Background="Transparent">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition MinWidth="22"
+                                                                              SharedSizeGroup="MenuItemIconColumnGroup"
+                                                                              Width="Auto" />
+                                                            <ColumnDefinition Width="13" />
+                                                            <ColumnDefinition Width="*" />
+                                                            <ColumnDefinition Width="30" />
+                                                            <ColumnDefinition
+                                                                SharedSizeGroup="MenuItemIGTColumnGroup"
+                                                                Width="Auto" />
+                                                            <ColumnDefinition Width="20" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <ContentPresenter x:Name="Icon"
+                                                                          Content="{TemplateBinding Icon}"
+                                                                          ContentSource="Icon"
+                                                                          HorizontalAlignment="Center"
+                                                                          Height="25"
+                                                                          Margin="5"
+                                                                          Width="25"
+                                                                          SnapsToDevicePixels="True"
+                                                                          ClipToBounds="True"
+                                                                          VerticalAlignment="Center" />
+                                                        <Border Grid.Column="0" x:Name="GlyphPanel"
+                                                                SnapsToDevicePixels="True"
+                                                                ClipToBounds="True"
+                                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                                BorderThickness="1"
+                                                                Background="#3D26A0DA"
+                                                                HorizontalAlignment="Center" Height="22"
+                                                                Margin="-1,0,0,0"
+                                                                Visibility="Hidden" VerticalAlignment="Center"
+                                                                Width="22">
+                                                            <Path x:Name="Glyph"
+                                                                  Data="F1M10,1.2L4.7,9.1 4.5,9.1 0,5.2 1.3,3.5 4.3,6.1 8.3,0 10,1.2z"
+                                                                  Fill="#FF212121" FlowDirection="LeftToRight"
+                                                                  Height="11"
+                                                                  Width="10" />
+                                                        </Border>
+                                                        <ContentPresenter x:Name="menuHeaderContainer"
+                                                                          ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                                                          Content="{TemplateBinding Header}"
+                                                                          Grid.Column="2"
+                                                                          ContentStringFormat="{TemplateBinding HeaderStringFormat}"
+                                                                          ContentSource="Header"
+                                                                          HorizontalAlignment="Left"
+                                                                          Margin="{TemplateBinding Padding}"
+                                                                          RecognizesAccessKey="True"
+                                                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                                                          VerticalAlignment="Center" />
+                                                        <TextBlock x:Name="menuGestureText" Grid.Column="4"
+                                                                   Margin="{TemplateBinding Padding}" Opacity="0.7"
+                                                                   Text="{TemplateBinding InputGestureText}"
+                                                                   VerticalAlignment="Center" />
+                                                    </Grid>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
 
-                                        <DataGridTemplateColumn.CellEditingTemplate>
-                                            <DataTemplate>
-                                                <ComboBox ItemsSource="{Binding DataContext.SelectedQuestionnaire.Type.Value, Converter={StaticResource QuestionnaireTypeAnswersConverter}, RelativeSource={RelativeSource AncestorType=Window}}"
-                                                          SelectedItem="{Binding Answer}"
-                                                          Padding="5"
-                                                          DisplayMemberPath="DisplayName">
-                                                    <ComboBox.Style>
-                                                        <Style TargetType="ComboBox" BasedOn="{StaticResource DefaultComboBoxStyle}">
-                                                            <Style.Triggers>
-                                                                <Trigger Property="IsDropDownOpen" Value="True">
-                                                                    <Setter Property="BorderThickness" Value="0" />
-                                                                </Trigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </ComboBox.Style>
-                                                </ComboBox>
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellEditingTemplate>
-                                    </DataGridTemplateColumn>
-                                </DataGrid.Columns>
-                            </DataGrid>
-                        </Grid>
-                    </TabItem>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsHighlighted" Value="True">
+                                            <Setter Property="Background"
+                                                    Value="{StaticResource DefaultItemSelectedBrush}" />
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
 
-                    <TabItem Header="Дополнительная информация">
-                        <ScrollViewer HorizontalScrollBarVisibility="Auto"
-                                      VerticalScrollBarVisibility="Auto">
-                            <ItemsControl BorderThickness="0"
-                                          ItemsSource="{Binding SelectedQuestionnaire.AdditionalInformation}">
+                                <ContextMenu x:Key="RowContextMenu"
+                                             BorderThickness="0"
+                                             Padding="0"
+                                             Background="{StaticResource HeaderBackgroundBrush}">
+                                    <MenuItem Header="Вставить перед"
+                                              Command="{Binding DataContext.OpenQuestionAddBeforeDialogCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                              CommandParameter="{Binding}">
+                                        <MenuItem.Icon>
+                                            <Image>
+                                                <Image.Source>
+                                                    <DrawingImage>
+                                                        <DrawingImage.Drawing>
+                                                            <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
+                                                                <DrawingGroup.Transform>
+                                                                    <TranslateTransform X="18.125"
+                                                                        Y="0.39466851949691772" />
+                                                                </DrawingGroup.Transform>
+                                                                <DrawingGroup
+                                                                    Transform="1,0,0,1,130.647574424744,374.739937782288">
+                                                                    <GeometryDrawing
+                                                                        Brush="{StaticResource DefaultForegroundBrush}"
+                                                                        Geometry="F1 M512,512z M0,0z M0,0C1.73682695,-0.01059839 1.73682695,-0.01059839 3.50874132,-0.02141088 4.78158324,-0.0189958 6.05442516,-0.01658071 7.36583805,-0.01409245 8.73103872,-0.01854426 10.0962368,-0.02385812 11.46143109,-0.02996117 15.21668143,-0.04415807 18.97184908,-0.04580414 22.72712243,-0.04536426 26.77560113,-0.04701094 30.82404561,-0.06007451 34.87250614,-0.07155704 43.72562794,-0.09441588 52.57872578,-0.1023283 61.43187308,-0.10738349 66.95774776,-0.11063886 72.48361546,-0.11716029 78.0094862,-0.12438488 93.30399285,-0.14395036 108.59849302,-0.16035541 123.893013,-0.16326141 124.87189403,-0.16344898 125.85077506,-0.16363655 126.85931915,-0.16382981 128.84380249,-0.16419606 130.82828583,-0.16455976 132.81276917,-0.16492092 133.79788947,-0.16510373 134.78300978,-0.16528654 135.79798222,-0.16547489 137.27746211,-0.16574572 137.27746211,-0.16574572 138.78683049,-0.16602201 154.77821194,-0.16956567 170.7694589,-0.19660022 186.76079368,-0.23397278 203.17212178,-0.27202063 219.58338308,-0.29141862 235.99475628,-0.29172093 245.21196673,-0.29230622 254.42901666,-0.30084465 263.64618587,-0.32971859 271.49257847,-0.3541852 279.33875198,-0.3615473 287.18517237,-0.34647106 291.18993189,-0.33928321 295.19425839,-0.3402396 299.19896984,-0.36288166 302.86378493,-0.38340396 306.52783226,-0.38093582 310.1926384,-0.36000682 312.14924169,-0.35483459 314.10586188,-0.37434303 316.06236643,-0.39466852 325.52879398,-0.30339998 325.52879398,-0.30339998 328.63326454,2.6245327 330.63130591,5.6875948 330.99575147,7.40351904 331.01648808,11.04131222 331.02293339,12.13057003 331.0293787,13.21982784 331.03601933,14.34209347 331.01668339,15.47002316 330.99734745,16.59795284 330.97742558,17.76006222 331.00642948,19.45195675 331.00642948,19.45195675 331.03601933,21.17803097 331.02957401,22.26728878 331.0231287,23.35654659 331.01648808,24.47881222 331.01084843,25.46816769 331.00520878,26.45752316 330.99939823,27.47685909 330.31875476,30.40491027 329.44121875,32.13358241 327.24623597,34.20374596 322.78994249,36.68934603 317.16443989,35.92624204 312.21202946,35.87479305 310.84524875,35.8784061 309.47847237,35.88420972 308.11170918,35.89201504 304.3565625,35.9070826 300.60209715,35.89093918 296.84700406,35.86970842 292.79719865,35.85223999 288.74746171,35.86359369 284.69764042,35.87137508 276.76462679,35.88205436 268.83187831,35.86608786 260.89890509,35.84123682 251.66466417,35.81332995 242.4304772,35.81196391 233.19620109,35.81179381 216.72290983,35.81060606 200.24974051,35.78562157 183.77649784,35.74712276 167.78364442,35.70977073 151.79087968,35.68852688 135.79798222,35.68559933 134.32030176,35.68532511 134.32030176,35.68532511 132.81276917,35.68504535 131.82936875,35.68486638 130.84596833,35.68468741 129.8327679,35.68450302 127.8528496,35.68413761 125.8729313,35.68376523 123.893013,35.68338585 122.91663772,35.68320033 121.94026244,35.68301482 120.93430003,35.68282368 105.70391578,35.67925496 90.47354527,35.66080498 75.24317495,35.64089261 69.71900142,35.63386596 64.19483115,35.62908559 58.67065411,35.62593126 49.90929294,35.62088598 41.14799355,35.60948046 32.3866642,35.58463096 28.38216748,35.57339526 24.37773156,35.56529535 20.37321758,35.56576443 16.70992671,35.56607204 13.0467798,35.55717285 9.38352657,35.54079641 7.42527522,35.5344107 5.46699956,35.53781973 3.50874132,35.54153532 1.77191437,35.53093693 1.77191437,35.53093693 0,35.52012444 -1.50190528,35.51719805 -1.50190528,35.51719805 -3.03415209,35.51421255 -5.74365199,35.25071886 -7.36273224,34.71241641 -9.64757442,33.26006222 -11.74210004,30.21197189 -11.90424091,27.621089 -11.91319942,23.97881222 -11.91577755,22.97205441 -11.91835567,21.96529659 -11.92101192,20.92803097 -11.91327755,19.88260128 -11.90554317,18.83717159 -11.89757442,17.76006222 -11.9053088,16.71463253 -11.91304317,15.66920284 -11.92101192,14.59209347 -11.9184338,13.58533566 -11.91585567,12.57857784 -11.91319942,11.54131222 -11.91094357,10.62414425 -11.90868771,9.70697628 -11.90636349,8.76201534 -11.6266322,6.05759434 -11.18546254,4.49809734 -9.64757442,2.26006222 -6.40118014,0.19649985 -3.80468976,0.00741324 0,0z" />
+                                                                </DrawingGroup>
+                                                                <DrawingGroup
+                                                                    Transform="1,0,0,1,130.388654708862,169.87136554718">
+                                                                    <GeometryDrawing
+                                                                        Brush="{StaticResource DefaultForegroundBrush}"
+                                                                        Geometry="F1 M512,512z M0,0z M0,0C1.15103584,-0.00322445 2.30207168,-0.00644889 3.4879874,-0.00977105 5.40117556,-0.00744815 5.40117556,-0.00744815 7.35301399,-0.00507832 8.7130741,-0.00694507 10.07313366,-0.00924522 11.43319237,-0.01194364 15.18347668,-0.01808491 18.93373877,-0.01792532 22.68402696,-0.01674926 26.72364604,-0.01654584 30.76325787,-0.02205841 34.80287361,-0.02680683 42.72216073,-0.03512675 50.6414404,-0.03786228 58.56073152,-0.03841921 64.99562474,-0.03889375 71.4305155,-0.04094538 77.86540794,-0.04411983 96.09471462,-0.05293017 114.32401539,-0.05753863 132.55332421,-0.05678936 134.02861447,-0.05672943 134.02861447,-0.05672943 135.53370857,-0.05666828 136.5184312,-0.0566274 137.50315383,-0.05658652 138.51771654,-0.0565444 154.48075108,-0.05613785 170.44376205,-0.06570864 186.40678976,-0.07980665 202.78301379,-0.09415587 219.1592263,-0.10107763 235.53545678,-0.10021287 244.73528165,-0.09988039 253.93508182,-0.10264972 263.13490105,-0.11339092 270.96741077,-0.12247684 278.79988458,-0.12468696 286.63239728,-0.1178815 290.63080799,-0.11460656 294.62914971,-0.11459449 298.62755394,-0.12323475 302.28539516,-0.13105797 305.94311222,-0.12971145 309.60095026,-0.12095062 311.55637595,-0.11867282 313.51180537,-0.12627696 315.46721637,-0.13419026 317.20159338,-0.12729207 317.20159338,-0.12729207 318.9710083,-0.12025452 319.97086695,-0.12047188 320.97072559,-0.12068925 322.00088298,-0.12091321 324.74259218,0.14118103 326.32352772,0.61595352 328.61134529,2.12863445 331.77778328,6.87829143 331.02053565,11.91719936 331.04884529,17.50363445 331.08171638,18.64058758 331.11458748,19.7775407 331.14845467,20.94894695 331.15554451,22.0472282 331.16263435,23.14550945 331.16993904,24.27707195 331.18339363,25.27915691 331.19684822,26.28124187 331.21071053,27.31369305 330.57803231,30.28509013 329.72840298,31.983388 327.50914013,34.07302284 323.03879015,36.55956841 317.39863356,35.79886579 312.43298531,35.75009441 311.06207873,35.75442363 309.6911776,35.76093982 308.32029063,35.76945448 304.55375449,35.78646364 300.78788208,35.77225312 297.02138078,35.7529397 292.95929656,35.73752752 288.89729446,35.75091066 284.83520699,35.76068401 276.87813873,35.77522051 268.92132537,35.76296688 260.96428125,35.74157077 251.70204856,35.71757772 242.43987449,35.71927407 233.17761762,35.72187668 216.6544159,35.72556802 200.13133441,35.70473073 183.60817146,35.67062664 167.56679941,35.63752917 151.52555354,35.62336911 135.48414803,35.62961102 118.02384135,35.63637159 100.56358757,35.63392467 83.10328871,35.61425161 82.18043181,35.61321213 81.2575749,35.61217264 80.30675264,35.61110166 78.45313527,35.60901073 76.59951791,35.60689976 74.74590058,35.60476848 68.28609113,35.59786673 61.82629796,35.59720459 55.3664856,35.59865093 47.49741603,35.60008908 39.62844949,35.59042828 31.75941413,35.56670457 27.74273798,35.55482636 23.72620562,35.54773149 19.70951271,35.55354214 16.03506105,35.55870073 12.36091362,35.55007305 8.68651409,35.53026754 6.7222977,35.52325629 4.75804594,35.53099202 2.79383415,35.53918886 1.63246612,35.53013222 0.47109809,35.52107558 -0.72546291,35.5117445 -1.72977087,35.5101733 -2.73407882,35.50860209 -3.76882035,35.50698328 -6.83019469,35.06486854 -8.18581247,34.27346457 -10.38865471,32.12863445 -11.95672948,27.42441015 -11.65575345,22.68118464 -11.70115471,17.75363445 -11.73015862,16.71207195 -11.75916252,15.67050945 -11.78904533,14.59738445 -11.85299186,6.90412537 -11.85299186,6.90412537 -9.49412346,2.96457195 -6.18410777,0.0782874 -4.31799272,0.00304312 0,0z" />
+                                                                </DrawingGroup>
+                                                                <DrawingGroup
+                                                                    Transform="1,0,0,1,132.660659790039,272.371810913086">
+                                                                    <GeometryDrawing
+                                                                        Brush="{StaticResource DefaultForegroundBrush}"
+                                                                        Geometry="F1 M512,512z M0,0z M0,0C1.30686977,-0.01064158 1.30686977,-0.01064158 2.64014095,-0.02149814 5.55928449,-0.03909914 8.47710026,-0.02096273 11.39622498,-0.00291443 13.48897407,-0.0080524 15.58171884,-0.01533275 17.67445374,-0.02459717 23.35829181,-0.04313364 29.04166165,-0.03015861 34.72548032,-0.01050687 40.6693587,0.00586007 46.61320697,-0.00293044 52.55709839,-0.00802612 62.53821812,-0.0125489 72.51915056,0.00333519 82.50022888,0.03126526 94.04685099,0.06332663 105.59313542,0.06329856 117.13978153,0.04605049 128.23981632,0.03019902 139.33972706,0.03690954 150.43975639,0.0539875 155.167376,0.06086786 159.89489648,0.05981545 164.62251472,0.05244255 170.18678317,0.04479383 175.75066625,0.05685985 181.31486893,0.08429146 183.35951658,0.09119086 185.40420013,0.0912567 187.44884682,0.08407593 190.23488579,0.07541725 193.01972562,0.09127621 195.80566406,0.11352539 196.61937409,0.10528462 197.43308411,0.09704386 198.27145201,0.08855337 201.87433705,0.14184904 203.91447662,0.30025172 206.81019497,2.53535557 210.23582378,7.22377274 209.56055362,11.80211529 209.58934021,17.44068909 209.62027771,18.93825745 209.62027771,18.93825745 209.65184021,20.46607971 209.70209068,29.89432426 209.70209068,29.89432426 206.33934021,33.62818909 202.5450518,36.27196319 198.39724922,35.90990818 193.95751953,35.8888855 192.67749106,35.89462382 192.67749106,35.89462382 191.37160343,35.90047807 188.50735242,35.91081073 185.64330177,35.90681541 182.77903748,35.90284729 180.72747105,35.90719361 178.67590625,35.91237648 176.62434387,35.91833496 171.04795834,35.9317446 165.4716405,35.93230146 159.89524198,35.92977166 155.2429725,35.92870332 150.5907168,35.93358179 145.93845028,35.93837708 134.96489208,35.94947899 123.99136811,35.94990578 113.01780701,35.94386292 101.68997611,35.93782098 90.36226936,35.95013821 79.03445965,35.97143298 69.31462802,35.9890344 59.59483596,35.99505266 49.87498897,35.99179524 44.0671841,35.98997997 38.25946779,35.9926429 32.45167732,36.00650978 26.99092149,36.0190598 21.53035954,36.01717079 16.06960678,36.00409889 14.06406909,36.00172742 12.05851787,36.00448812 10.05299568,36.01272202 7.31781858,36.0231429 4.5832977,36.01512636 1.84814453,36.00241089 0.65427127,36.01347232 0.65427127,36.01347232 -0.56372064,36.02475721 -5.10679655,35.98024454 -8.0713323,35.48173419 -11.66065979,32.62818909 -14.7597964,27.97948418 -14.06923742,23.22273137 -14.09815979,17.75318909 -14.13103088,16.66393127 -14.16390198,15.57467346 -14.19776917,14.45240784 -14.20485901,13.39924377 -14.21194885,12.34607971 -14.21925354,11.26100159 -14.23270813,10.30081116 -14.24616272,9.34062073 -14.26002502,8.35133362 -12.59344975,0.77944744 -6.76457689,-0.09866388 0,0z" />
+                                                                </DrawingGroup>
+                                                                <DrawingGroup
+                                                                    Transform="1,0,0,1,61.7632141113281,67.4238891601563">
+                                                                    <GeometryDrawing
+                                                                        Brush="{StaticResource DefaultForegroundBrush}"
+                                                                        Geometry="F1 M512,512z M0,0z M0,0C4.82332677,1.24230524 7.96137072,5.32261296 11.29537964,8.81829834 12.12513809,9.6570047 12.95489655,10.49571106 13.80979919,11.35983276 16.45061018,14.03872781 19.06202628,16.74439747 21.67428589,19.45111084 23.45829601,21.26668061 25.24408462,23.08050462 27.03170776,24.89251709 30.28575327,28.20504107 33.53551054,31.52132333 36.76193237,34.86077881 37.73500587,35.86671585 37.73500587,35.86671585 38.72773743,36.89297485 40.64615247,39.03270295 41.19606836,40.36234383 41.73678589,43.20111084 41.1886754,46.90085664 40.59670321,47.64239274 38.16769409,50.31658936 37.53022247,51.01946075 36.89275085,51.72233215 36.23596191,52.44650269 33.16019466,55.72294205 30.02491126,58.93093261 26.84225464,62.10345459 26.16882523,62.77784073 25.49539581,63.45222687 24.80155945,64.14704895 23.39358149,65.55570152 21.98436365,66.96311583 20.57394409,68.36932373 18.40894984,70.52890857 16.24941333,72.69384966 14.09030151,74.85931396 12.71627352,76.23268204 11.34193583,77.60574035 9.96725464,78.97845459 9.32144943,79.62628403 8.67564423,80.27411346 8.01026917,80.9415741 7.41237076,81.53632034 6.81447235,82.13106659 6.19845581,82.74383545 5.41072029,83.53037758 5.41072029,83.53037758 4.60707092,84.33280945 2.33818994,86.39143434 1.04649654,86.59765303 -2.07571411,86.95111084 -5.76321411,86.57611084 -5.76321411,86.57611084 -8.70071411,84.57611084 -10.82298531,81.48917091 -11.63100647,79.42870515 -11.36404419,75.65496826 -9.02170783,67.55054155 1.35492482,60.34308086 7.17428589,54.57611084 8.15433899,53.60108698 9.13415829,52.62582804 10.11373901,51.65032959 12.48580902,49.28994466 14.86019449,46.93194179 17.23678589,44.57611084 15.64227132,40.60447989 12.8712048,37.97069663 9.86178589,35.04095459 9.33665405,34.52102432 8.81152222,34.00109406 8.27047729,33.46540833 6.59727697,31.80996866 4.91753154,30.16138653 3.23678589,28.51361084 1.55692485,26.86141074 -0.1214381,25.20775743 -1.79690552,23.55110168 -2.83809032,22.522127 -3.88193723,21.49583731 -4.92874146,20.47257996 -8.5019985,16.94856758 -10.62137359,14.83241258 -11.20071411,9.70111084 -11.09590764,6.3596338 -10.72442527,5.51792758 -8.76321411,2.57611084 -5.67589445,0.51789773 -3.70433301,-0.1107315 0,0z" />
+                                                                </DrawingGroup>
+                                                                <DrawingGroup Transform="1,0,0,1,132,85">
+                                                                    <GeometryDrawing
+                                                                        Brush="{StaticResource DefaultForegroundBrush}"
+                                                                        Geometry="F1 M512,512z M0,0z M0,0C2.43119623,1.87015094 3.64069173,3.28138345 5,6 5.11145671,8.94283167 5.16412462,11.86126505 5.16796875,14.8046875 5.17129715,15.68021271 5.17462555,16.55573792 5.17805481,17.45779419 5.1831227,19.31218947 5.18546318,21.16659389 5.18530273,23.02099609 5.18748583,25.8565987 5.20563353,28.6918102 5.22460938,31.52734375 5.227544,33.32812367 5.22952833,35.12890544 5.23046875,36.9296875 5.23765427,37.77771942 5.24483978,38.62575134 5.25224304,39.4994812 5.24916641,40.29355377 5.24608978,41.08762634 5.24291992,41.90576172 5.24434494,42.60144257 5.24576996,43.29712341 5.24723816,44.0138855 4.95320433,46.37591916 4.22116031,47.96631655 3,50 -0.22293286,52.3020949 -3.11996324,52.47510654 -7,52 -9.69990662,50.20006226 -11.5418865,48.916227 -13,46 -13.11145671,43.05716833 -13.16412462,40.13873495 -13.16796875,37.1953125 -13.17296135,35.88202469 -13.17296135,35.88202469 -13.17805481,34.54220581 -13.1831227,32.68781053 -13.18546318,30.83340611 -13.18530273,28.97900391 -13.18748583,26.1434013 -13.20563353,23.3081898 -13.22460938,20.47265625 -13.227544,18.67187633 -13.22952833,16.87109456 -13.23046875,15.0703125 -13.23765427,14.22228058 -13.24483978,13.37424866 -13.25224304,12.5005188 -13.2476281,11.30940994 -13.2476281,11.30940994 -13.24291992,10.09423828 -13.24434494,9.39855743 -13.24576996,8.70287659 -13.24723816,7.9861145 -12.9489334,5.58977157 -12.28168469,4.04348208 -11,2 -7.33218328,-0.44521115 -4.26546767,-0.72237759 0,0z" />
+                                                                </DrawingGroup>
+                                                                <DrawingGroup Transform="1,0,0,1,443.8125,101.625">
+                                                                    <GeometryDrawing
+                                                                        Brush="{StaticResource DefaultForegroundBrush}"
+                                                                        Geometry="F1 M512,512z M0,0z M0,0C1.6406543,-0.05607422 1.6406543,-0.05607422 3.31445312,-0.11328125 11.36773122,-0.20161702 11.36773122,-0.20161702 15.4140625,2.64453125 18.10248695,6.78375744 17.88207249,8.51299258 17.1875,13.375 15.31734906,15.80619623 13.90611655,17.01569173 11.1875,18.375 7.42305311,18.66995558 3.64965053,18.6529968 -0.125,18.6875 -1.69411133,18.73100586 -1.69411133,18.73100586 -3.29492188,18.77539062 -11.03586828,18.83944683 -11.03586828,18.83944683 -14.98046875,16.48046875 -17.17371973,13.95986688 -17.75473642,12.89487219 -18.125,9.5625 -17.74085642,5.6442355 -16.51993683,4.16206733 -13.8125,1.375 -9.71439901,-0.67405049 -4.50442814,0.05778275 0,0z" />
+                                                                </DrawingGroup>
+                                                                <DrawingGroup Transform="1,0,0,1,307,101.4375">
+                                                                    <GeometryDrawing
+                                                                        Brush="{StaticResource DefaultForegroundBrush}"
+                                                                        Geometry="F1 M512,512z M0,0z M0,0C1.08023437,-0.01095703 2.16046875,-0.02191406 3.2734375,-0.03320312 7.93210476,0.00993268 11.09342507,0.04477461 15.1875,2.3828125 17.73239075,5.44326301 18,7.61592097 18,11.5625 16.41161066,15.13637602 15.28365642,16.37339572 12,18.5625 8.22295039,18.99974849 4.42460942,18.88666956 0.625,18.875 -0.93734375,18.89916992 -0.93734375,18.89916992 -2.53125,18.92382812 -12.14911315,18.92997765 -12.14911315,18.92997765 -16,15.5625 -17.57898053,12.40453893 -17.81928171,8.95579364 -17,5.5625 -12.75275134,-0.96741093 -7.04965728,-0.15563086 0,0z" />
+                                                                </DrawingGroup>
+                                                                <DrawingGroup Transform="1,0,0,1,238.875,101.5625">
+                                                                    <GeometryDrawing
+                                                                        Brush="{StaticResource DefaultForegroundBrush}"
+                                                                        Geometry="F1 M512,512z M0,0z M0,0C1.63388672,-0.04930664 1.63388672,-0.04930664 3.30078125,-0.09960938 11.28641383,-0.15336822 11.28641383,-0.15336822 15.3515625,2.7109375 18.02748127,6.82501526 17.73881214,8.60372939 17.125,13.4375 15.38246655,16.67363354 14.65314056,17.26145315 11.125,18.4375 7.33811621,18.72001603 3.54625314,18.71502224 -0.25,18.75 -1.2915625,18.77900391 -2.333125,18.80800781 -3.40625,18.83789062 -11.06145693,18.90152086 -11.06145693,18.90152086 -15.0390625,16.6328125 -17.60455507,13.56513841 -17.875,11.4031438 -17.875,7.4375 -14.17547671,-0.8864274 -8.00821516,0.04234661 0,0z" />
+                                                                </DrawingGroup>
+                                                                <DrawingGroup Transform="1,0,0,1,170.8125,101.625">
+                                                                    <GeometryDrawing
+                                                                        Brush="{StaticResource DefaultForegroundBrush}"
+                                                                        Geometry="F1 M512,512z M0,0z M0,0C1.6406543,-0.05607422 1.6406543,-0.05607422 3.31445312,-0.11328125 11.36773122,-0.20161702 11.36773122,-0.20161702 15.4140625,2.64453125 18.10248695,6.78375744 17.88207249,8.51299258 17.1875,13.375 15.31734906,15.80619623 13.90611655,17.01569173 11.1875,18.375 7.42305311,18.66995558 3.64965053,18.6529968 -0.125,18.6875 -1.69411133,18.73100586 -1.69411133,18.73100586 -3.29492188,18.77539062 -11.03586828,18.83944683 -11.03586828,18.83944683 -14.98046875,16.48046875 -17.17371973,13.95986688 -17.75473642,12.89487219 -18.125,9.5625 -17.74085642,5.6442355 -16.51993683,4.16206733 -13.8125,1.375 -9.71439901,-0.67405049 -4.50442814,0.05778275 0,0z" />
+                                                                </DrawingGroup>
+                                                                <DrawingGroup Transform="1,0,0,1,375.0625,101.5625">
+                                                                    <GeometryDrawing
+                                                                        Brush="{StaticResource DefaultForegroundBrush}"
+                                                                        Geometry="F1 M512,512z M0,0z M0,0C1.08861328,0.00580078 2.17722656,0.01160156 3.29882812,0.01757812 12.28970828,0.15589936 12.28970828,0.15589936 15.9375,2.4375 18.2395949,5.66043286 18.41260654,8.55746324 17.9375,12.4375 16.13756226,15.13740662 14.853727,16.9793865 11.9375,18.4375 8.17305311,18.73245558 4.39965053,18.7154968 0.625,18.75 -0.94411133,18.79350586 -0.94411133,18.79350586 -2.54492188,18.83789062 -10.28586828,18.90194683 -10.28586828,18.90194683 -14.23046875,16.54296875 -16.60834026,13.81019104 -17.02307627,12.78574298 -17.4375,9.125 -17.0625,5.4375 -17.0625,5.4375 -15.29296875,2.734375 -10.39389531,-0.74888399 -5.85634504,-0.177465 0,0z" />
+                                                                </DrawingGroup>
+                                                            </DrawingGroup>
+                                                        </DrawingImage.Drawing>
+                                                    </DrawingImage>
+                                                </Image.Source>
+                                            </Image>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Header="Вставить после"
+                                              Command="{Binding DataContext.OpenQuestionAddAfterDialogCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                              CommandParameter="{Binding}">
+                                        <MenuItem.Icon>
+                                            <Image>
+                                                <Image.Source>
+                                                    <DrawingImage>
+                                                        <DrawingImage.Drawing>
+                                                            <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
+                                                                <DrawingGroup.Transform>
+                                                                    <TranslateTransform X="18.755126953125"
+                                                                        Y="0.39466851949691772" />
+                                                                </DrawingGroup.Transform>
+                                                                <DrawingGroup
+                                                                    Transform="1,0,0,1,137.171630859375,323.365081787109">
+                                                                    <GeometryDrawing
+                                                                        Brush="{StaticResource DefaultForegroundBrush}"
+                                                                        Geometry="F1 M512,512z M0,0z M0,0C1.37019607,-0.00576161 2.74038442,-0.013703 4.1105566,-0.02363622 7.87513944,-0.04452809 11.63908935,-0.03418426 15.4036746,-0.01870513 19.4637505,-0.00740492 23.52371658,-0.02484769 27.58377075,-0.03860474 35.53714646,-0.06085598 43.49028646,-0.05602761 51.44367146,-0.04154153 57.90663035,-0.03025668 64.36952311,-0.02871512 70.83248901,-0.03416061 71.75178788,-0.03492678 72.67108675,-0.03569294 73.61824316,-0.03648233 75.48569085,-0.03808093 77.35313853,-0.03970199 79.22058618,-0.04134528 96.73804433,-0.05560831 114.25537173,-0.03920139 131.77280843,-0.01234345 146.80864677,0.00999584 161.8442921,0.00611586 176.88012695,-0.01693726 194.33422938,-0.0436855 211.78821717,-0.05423496 229.24233723,-0.03887594 231.10297456,-0.03728317 232.9636119,-0.03571131 234.82424927,-0.03416061 236.19750843,-0.03300355 236.19750843,-0.03300355 237.59851021,-0.03182311 244.05486769,-0.02750317 250.51115254,-0.03479896 256.96749878,-0.04655838 264.83402488,-0.06057109 272.70030147,-0.05680943 280.56679893,-0.03015466 284.58167108,-0.01699977 288.59612702,-0.01189218 292.61099625,-0.02840042 296.28505657,-0.04327903 299.95831416,-0.03514765 303.63230145,-0.00851266 305.59380139,-0.00026465 307.55535688,-0.01662436 309.51679897,-0.03379881 319.00651464,0.07256035 319.00651464,0.07256035 322.1121521,2.99965858 324.11761826,6.07906164 324.45993734,7.79587053 324.45727539,11.45132446 324.45920898,12.54509399 324.46114258,13.63886353 324.46313477,14.76577759 324.43928711,15.89821899 324.41543945,17.0306604 324.39086914,18.19741821 324.40182617,19.33372681 324.4127832,20.4700354 324.42407227,21.64077759 324.35001833,30.00887252 324.35001833,30.00887252 321.91796875,32.92764282 318.58447417,35.65122357 316.68995413,35.76153477 312.44250774,35.76913929 311.2920886,35.77359713 310.14166946,35.77805498 308.95638913,35.78264791 307.68161247,35.78246355 306.40683582,35.78227918 305.09342957,35.78208923 303.73408173,35.78538702 302.37473487,35.78911241 301.01538926,35.79323071 297.26704019,35.80326842 293.51870713,35.80697034 289.77034652,35.80962002 285.7327499,35.8135178 281.69516602,35.82309645 277.65757751,35.83183289 267.90079788,35.85161155 258.14401718,35.86166499 248.3872225,35.87056068 243.79589598,35.87494102 239.20457061,35.88030846 234.61324501,35.88554955 219.35656441,35.90256274 204.09988454,35.91705802 188.84319592,35.92429829 184.8824431,35.92620827 180.92169029,35.92812859 176.9609375,35.93008423 175.97647718,35.93056797 174.99201686,35.93105171 173.97772441,35.93155011 158.02180623,35.93985454 142.06596293,35.96519802 126.11007746,35.99766491 109.73949884,36.03070487 93.3689583,36.04874424 76.99834615,36.05194253 67.8023647,36.0541104 58.60649246,36.06289952 49.41054344,36.0884037 41.58059876,36.11006887 33.75078979,36.1181818 25.92081853,36.10843692 21.92422822,36.10388009 17.92791817,36.10585816 13.93136597,36.12519836 10.27397103,36.14274484 6.61706256,36.14190242 2.95966307,36.12630107 1.00694675,36.12277849 -0.94577418,36.13901467 -2.89842063,36.15590554 -4.63578421,36.14303421 -4.63578421,36.14303421 -6.40824604,36.12990284 -7.40772497,36.13087965 -8.40720389,36.13185646 -9.43697006,36.13286287 -12.93394671,35.49611083 -14.62204694,34.05921033 -17.17163086,31.63491821 -19.22068135,27.53681722 -18.48884811,22.32684636 -18.54663086,17.82241821 -18.60270508,16.18176392 -18.60270508,16.18176392 -18.65991211,14.50796509 -18.67151367,13.45028931 -18.68311523,12.39261353 -18.69506836,11.30288696 -18.72479736,9.8530542 -18.72479736,9.8530542 -18.75512695,8.37393188 -18.13063336,5.44247012 -17.25721336,3.7565518 -15.06957245,1.69402146 -10.60343414,-0.79820571 -4.96478899,-0.04347185 0,0z" />
+                                                                </DrawingGroup>
+                                                                <DrawingGroup
+                                                                    Transform="1,0,0,1,130.647574424744,118.739937782288">
+                                                                    <GeometryDrawing
+                                                                        Brush="{StaticResource DefaultForegroundBrush}"
+                                                                        Geometry="F1 M512,512z M0,0z M0,0C1.73682695,-0.01059839 1.73682695,-0.01059839 3.50874132,-0.02141088 4.78158324,-0.0189958 6.05442516,-0.01658071 7.36583805,-0.01409245 8.73103872,-0.01854426 10.0962368,-0.02385812 11.46143109,-0.02996117 15.21668143,-0.04415807 18.97184908,-0.04580414 22.72712243,-0.04536426 26.77560113,-0.04701094 30.82404561,-0.06007451 34.87250614,-0.07155704 43.72562794,-0.09441588 52.57872578,-0.1023283 61.43187308,-0.10738349 66.95774776,-0.11063886 72.48361546,-0.11716029 78.0094862,-0.12438488 93.30399285,-0.14395036 108.59849302,-0.16035541 123.893013,-0.16326141 124.87189403,-0.16344898 125.85077506,-0.16363655 126.85931915,-0.16382981 128.84380249,-0.16419606 130.82828583,-0.16455976 132.81276917,-0.16492092 133.79788947,-0.16510373 134.78300978,-0.16528654 135.79798222,-0.16547489 137.27746211,-0.16574572 137.27746211,-0.16574572 138.78683049,-0.16602201 154.77821194,-0.16956567 170.7694589,-0.19660022 186.76079368,-0.23397278 203.17212178,-0.27202063 219.58338308,-0.29141862 235.99475628,-0.29172093 245.21196673,-0.29230622 254.42901666,-0.30084465 263.64618587,-0.32971859 271.49257847,-0.3541852 279.33875198,-0.3615473 287.18517237,-0.34647106 291.18993189,-0.33928321 295.19425839,-0.3402396 299.19896984,-0.36288166 302.86378493,-0.38340396 306.52783226,-0.38093582 310.1926384,-0.36000682 312.14924169,-0.35483459 314.10586188,-0.37434303 316.06236643,-0.39466852 325.52879398,-0.30339998 325.52879398,-0.30339998 328.63326454,2.6245327 330.63130591,5.6875948 330.99575147,7.40351904 331.01648808,11.04131222 331.02293339,12.13057003 331.0293787,13.21982784 331.03601933,14.34209347 331.01668339,15.47002316 330.99734745,16.59795284 330.97742558,17.76006222 331.00642948,19.45195675 331.00642948,19.45195675 331.03601933,21.17803097 331.02957401,22.26728878 331.0231287,23.35654659 331.01648808,24.47881222 331.01084843,25.46816769 331.00520878,26.45752316 330.99939823,27.47685909 330.31875476,30.40491027 329.44121875,32.13358241 327.24623597,34.20374596 322.78994249,36.68934603 317.16443989,35.92624204 312.21202946,35.87479305 310.84524875,35.8784061 309.47847237,35.88420972 308.11170918,35.89201504 304.3565625,35.9070826 300.60209715,35.89093918 296.84700406,35.86970842 292.79719865,35.85223999 288.74746171,35.86359369 284.69764042,35.87137508 276.76462679,35.88205436 268.83187831,35.86608786 260.89890509,35.84123682 251.66466417,35.81332995 242.4304772,35.81196391 233.19620109,35.81179381 216.72290983,35.81060606 200.24974051,35.78562157 183.77649784,35.74712276 167.78364442,35.70977073 151.79087968,35.68852688 135.79798222,35.68559933 134.32030176,35.68532511 134.32030176,35.68532511 132.81276917,35.68504535 131.82936875,35.68486638 130.84596833,35.68468741 129.8327679,35.68450302 127.8528496,35.68413761 125.8729313,35.68376523 123.893013,35.68338585 122.91663772,35.68320033 121.94026244,35.68301482 120.93430003,35.68282368 105.70391578,35.67925496 90.47354527,35.66080498 75.24317495,35.64089261 69.71900142,35.63386596 64.19483115,35.62908559 58.67065411,35.62593126 49.90929294,35.62088598 41.14799355,35.60948046 32.3866642,35.58463096 28.38216748,35.57339526 24.37773156,35.56529535 20.37321758,35.56576443 16.70992671,35.56607204 13.0467798,35.55717285 9.38352657,35.54079641 7.42527522,35.5344107 5.46699956,35.53781973 3.50874132,35.54153532 1.77191437,35.53093693 1.77191437,35.53093693 0,35.52012444 -1.50190528,35.51719805 -1.50190528,35.51719805 -3.03415209,35.51421255 -5.74365199,35.25071886 -7.36273224,34.71241641 -9.64757442,33.26006222 -11.74210004,30.21197189 -11.90424091,27.621089 -11.91319942,23.97881222 -11.91577755,22.97205441 -11.91835567,21.96529659 -11.92101192,20.92803097 -11.91327755,19.88260128 -11.90554317,18.83717159 -11.89757442,17.76006222 -11.9053088,16.71463253 -11.91304317,15.66920284 -11.92101192,14.59209347 -11.9184338,13.58533566 -11.91585567,12.57857784 -11.91319942,11.54131222 -11.91094357,10.62414425 -11.90868771,9.70697628 -11.90636349,8.76201534 -11.6266322,6.05759434 -11.18546254,4.49809734 -9.64757442,2.26006222 -6.40118014,0.19649985 -3.80468976,0.00741324 0,0z" />
+                                                                </DrawingGroup>
+                                                                <DrawingGroup
+                                                                    Transform="1,0,0,1,135.299163818359,220.859558105469">
+                                                                    <GeometryDrawing
+                                                                        Brush="{StaticResource DefaultForegroundBrush}"
+                                                                        Geometry="F1 M512,512z M0,0z M0,0C0.84447964,-0.00297112 1.68895929,-0.00594224 2.55902922,-0.0090034 5.39325483,-0.0176861 8.22743817,-0.01919828 11.06167603,-0.02069092 13.09191478,-0.02531933 15.12215266,-0.03034402 17.15238953,-0.03573608 22.67097424,-0.04885834 28.18954679,-0.05530451 33.70814466,-0.05974674 37.15489459,-0.06267726 40.60164118,-0.06678199 44.04838943,-0.07125092 54.82962319,-0.0849243 65.61084933,-0.0945922 76.39209116,-0.09845281 88.84317051,-0.10293575 101.2941402,-0.12049533 113.74518621,-0.1494534 123.36651472,-0.17105477 132.98781233,-0.18115623 142.60916483,-0.18249393 148.35720638,-0.1835429 154.10514481,-0.18947059 159.85316086,-0.20731354 165.25891712,-0.22376784 170.66449247,-0.22596253 176.07026482,-0.21717453 178.05442349,-0.21640279 180.03859178,-0.22076488 182.02272606,-0.23063278 184.73126879,-0.24331373 187.43916701,-0.23749649 190.14770508,-0.22705078 191.32553623,-0.23913539 191.32553623,-0.23913539 192.52716196,-0.25146413 197.32583659,-0.20817777 200.62471071,0.59247592 204.70083618,3.14044189 207.848613,7.48839717 207.03001069,12.93885801 207.01333618,18.07794189 207.02944946,19.06729736 207.04556274,20.05665283 207.06216431,21.07598877 207.0683108,30.2158182 207.0683108,30.2158182 203.70083618,34.14044189 200.4760428,35.75283859 196.95099258,35.29218995 193.40766907,35.29434204 192.53969139,35.29872429 191.67171372,35.30310655 190.77743369,35.3076216 187.85175257,35.32103937 184.92610159,35.3271951 182.00039673,35.33331299 179.90971743,35.34121153 177.81903951,35.34948033 175.72836304,35.35809326 168.84810697,35.38433938 161.96784472,35.39962228 155.08755493,35.41387939 152.72203886,35.41923778 150.35652283,35.42461529 147.99100685,35.43001175 138.15413662,35.4516432 128.31726806,35.47038151 118.48038006,35.48163414 104.36655705,35.49788366 90.25300892,35.53108296 76.13928956,35.58803499 66.22417875,35.62668562 56.30914162,35.64626099 46.39395744,35.6515547 40.46754269,35.6552145 34.54142094,35.66730274 28.61508751,35.69965744 23.04102071,35.72965251 17.46742549,35.73608039 11.89329529,35.72427368 9.84581562,35.72405224 7.7983146,35.73241552 5.75090981,35.74992752 2.95835199,35.77251568 0.16751922,35.76437256 -2.62504578,35.7484436 -3.43788932,35.76232569 -4.25073286,35.77620778 -5.08820802,35.79051054 -9.16718428,35.73306608 -11.05902905,35.32996149 -14.30185223,32.77065468 -16.59763613,29.7473907 -16.9309417,28.33020315 -16.92807007,24.57794189 -16.93000366,23.53380127 -16.93193726,22.48966064 -16.93392944,21.41387939 -16.91008179,20.33364502 -16.88623413,19.25341064 -16.86166382,18.14044189 -16.87262085,17.06020752 -16.88357788,15.97997314 -16.89486694,14.86700439 -16.85193476,10.23032866 -16.80558479,7.0446859 -14.51400757,2.95294189 -10.21923338,-0.56165286 -5.33330987,-0.005852 0,0z" />
+                                                                </DrawingGroup>
+                                                                <DrawingGroup Transform="1,0,0,1,59.3125,374.25">
+                                                                    <GeometryDrawing
+                                                                        Brush="{StaticResource DefaultForegroundBrush}"
+                                                                        Geometry="F1 M512,512z M0,0z M0,0C3.8143614,0.77580232 4.69019329,1.32849498 7.44750977,3.8347168 8.14756134,4.46993256 8.84761292,5.10514832 9.56887817,5.75961304 12.84069048,8.83339076 16.04565668,11.96522019 19.21484375,15.14453125 19.88922989,15.81796066 20.56361603,16.49139008 21.25843811,17.18522644 22.66709068,18.5932044 24.07450499,20.00242224 25.48071289,21.4128418 27.64029773,23.57783604 29.80523882,25.73737256 31.97070312,27.89648438 33.3440712,29.27051237 34.71712951,30.64485006 36.08984375,32.01953125 37.06158791,32.98823906 37.06158791,32.98823906 38.05296326,33.97651672 38.94508263,34.87336433 38.94508263,34.87336433 39.85522461,35.78833008 40.37958603,36.31348709 40.90394745,36.8386441 41.44419861,37.37971497 43.23967981,39.35857628 43.68295394,40.72272365 44.125,43.375 43.14448669,50.93895984 35.87516896,56.85383052 30.64453125,62.0234375 29.99425461,62.67325592 29.34397797,63.32307434 28.67399597,63.99258423 27.31246443,65.35111926 25.94852828,66.70724838 24.58227539,68.06103516 22.48975167,70.13515821 20.40548504,72.21731724 18.32226562,74.30078125 16.99266072,75.62547514 15.66259882,76.94971055 14.33203125,78.2734375 13.39917046,79.20462906 13.39917046,79.20462906 12.44746399,80.15463257 11.86643417,80.72928253 11.28540436,81.3039325 10.68676758,81.89599609 10.17857986,82.40037201 9.67039215,82.90474792 9.14680481,83.42440796 5.76836804,86.49328628 3.24852622,87.26390673 -1.3046875,87.12109375 -3.3125,86.75 -3.3125,86.75 -6.3125,84.75 -8.5202891,81.43831635 -8.89868905,79.67502334 -8.9765625,75.8125 -7.96188754,72.66103893 -5.67482942,71.03903764 -3.3125,68.75 -2.39815186,67.83565186 -1.48380371,66.92130371 -0.54174805,65.97924805 6.53466797,58.90283203 13.61108398,51.82641602 20.6875,44.75 15.33352018,38.22854246 9.37448091,32.35578929 3.375,26.4375 1.37603383,24.46511498 -0.6195922,22.48943603 -2.61328125,20.51171875 -3.49153564,19.64506592 -4.36979004,18.77841309 -5.2746582,17.88549805 -8.36610038,14.64590961 -8.7261134,12.29291714 -8.65234375,7.79296875 -8.3125,5.75 -8.3125,5.75 -6.25,2.75 -3.3125,0.75 -3.3125,0.75 0,0z" />
+                                                                </DrawingGroup>
+                                                                <DrawingGroup Transform="1,0,0,1,131,392">
+                                                                    <GeometryDrawing
+                                                                        Brush="{StaticResource DefaultForegroundBrush}"
+                                                                        Geometry="F1 M512,512z M0,0z M0,0C2.69990662,1.79993774 4.5418865,3.083773 6,6 6.12365056,8.93108041 6.18844664,11.83742448 6.203125,14.76953125 6.20882507,15.64268478 6.21452515,16.51583832 6.22039795,17.41545105 6.22985345,19.26564317 6.23638411,21.11585218 6.24023438,22.96606445 6.24992565,25.79082844 6.28093755,28.61486044 6.3125,31.43945312 6.31903152,33.23697485 6.32428141,35.03450177 6.328125,36.83203125 6.3404718,37.67490189 6.3528186,38.51777252 6.36553955,39.38618469 6.34780892,44.07715653 6.0664195,47.19777047 3,51 -0.19233485,52.59616743 -3.53461497,52.51466114 -7,52 -9.43119623,50.12984906 -10.64069173,48.71861655 -12,46 -12.13582508,43.06898854 -12.21276479,40.16294862 -12.23828125,37.23046875 -12.246353,36.35731522 -12.25442474,35.48416168 -12.26274109,34.58454895 -12.27658364,32.7343647 -12.28730503,30.88415488 -12.29516602,29.03393555 -12.3123692,26.20897803 -12.35625166,23.38519379 -12.40039062,20.56054688 -12.41051847,18.76302944 -12.41903429,16.96550205 -12.42578125,15.16796875 -12.44328934,14.32509811 -12.46079742,13.48222748 -12.47883606,12.61381531 -12.46383565,8.54271514 -12.32364949,6.51237924 -10.09838867,2.98950195 -6.74868795,-0.18638067 -4.57612589,-0.44863979 0,0z" />
+                                                                </DrawingGroup>
+                                                                <DrawingGroup Transform="1,0,0,1,170.375,408.8125">
+                                                                    <GeometryDrawing
+                                                                        Brush="{StaticResource DefaultForegroundBrush}"
+                                                                        Geometry="F1 M512,512z M0,0z M0,0C1.05445313,-0.01224609 2.10890625,-0.02449219 3.1953125,-0.03710938 4.21109375,-0.03904297 5.226875,-0.04097656 6.2734375,-0.04296875 7.66828369,-0.04913208 7.66828369,-0.04913208 9.09130859,-0.05541992 11.79563222,0.20385952 13.3610715,0.70424714 15.625,2.1875 17.73712504,5.35568756 17.95656464,7.31969252 18.18359375,11.0546875 17.21055256,14.76993568 15.77530706,15.97509948 12.625,18.1875 8.44788259,18.9578622 4.36215279,18.93068829 0.125,18.875 -1.00292969,18.90271484 -2.13085938,18.93042969 -3.29296875,18.95898438 -11.27673151,18.93536378 -11.27673151,18.93536378 -14.24975586,16.91088867 -16.40967022,14.43027491 -17.34529878,12.34920663 -17.9375,9.125 -17.24520639,5.50968892 -15.91908967,3.80641584 -13.375,1.1875 -9.40063582,-0.79968209 -4.36949074,0.00265139 0,0z" />
+                                                                </DrawingGroup>
+                                                                <DrawingGroup Transform="1,0,0,1,375.3125,408.6875">
+                                                                    <GeometryDrawing
+                                                                        Brush="{StaticResource DefaultForegroundBrush}"
+                                                                        Geometry="F1 M512,512z M0,0z M0,0C1.56911133,-0.04350586 1.56911133,-0.04350586 3.16992188,-0.08789062 10.91086828,-0.15194683 10.91086828,-0.15194683 14.85546875,2.20703125 17.84969694,5.64815917 17.95865025,7.79332916 17.6875,12.3125 16.48043121,15.65515205 15.76693151,16.25954566 12.6875,18.3125 8.57855384,18.80502411 4.44778053,18.72904419 0.3125,18.75 -1.39292969,18.79930664 -1.39292969,18.79930664 -3.1328125,18.84960938 -11.47951317,18.90349066 -11.47951317,18.90349066 -15.56640625,16.00390625 -17.87230572,12.44962272 -17.98165242,10.47611505 -17.3125,6.3125 -12.63688408,-0.85677774 -7.92531602,0.07244347 0,0z" />
+                                                                </DrawingGroup>
+                                                                <DrawingGroup Transform="1,0,0,1,307.3125,408.6875">
+                                                                    <GeometryDrawing
+                                                                        Brush="{StaticResource DefaultForegroundBrush}"
+                                                                        Geometry="F1 M512,512z M0,0z M0,0C1.56911133,-0.04350586 1.56911133,-0.04350586 3.16992188,-0.08789062 10.85961802,-0.15152274 10.85961802,-0.15152274 14.8515625,2.0859375 17.22661436,4.96631955 17.64089588,6.7110577 17.8984375,10.34375 17.55616161,13.53832498 15.96126123,15.16866798 13.6875,17.3125 9.58939901,19.36155049 4.37942814,18.62971725 -0.125,18.6875 -1.21876953,18.72488281 -2.31253906,18.76226562 -3.43945312,18.80078125 -11.49273122,18.88911702 -11.49273122,18.88911702 -15.5390625,16.04296875 -18.22748695,11.90374256 -18.00707249,10.17450742 -17.3125,5.3125 -12.57287558,-0.84901175 -7.20025877,0.06581589 0,0z" />
+                                                                </DrawingGroup>
+                                                                <DrawingGroup
+                                                                    Transform="1,0,0,1,437.18359375,408.734375">
+                                                                    <GeometryDrawing
+                                                                        Brush="{StaticResource DefaultForegroundBrush}"
+                                                                        Geometry="F1 M512,512z M0,0z M0,0C1.5149707,-0.00386719 1.5149707,-0.00386719 3.06054688,-0.0078125 4.64125977,0.00378906 4.64125977,0.00378906 6.25390625,0.015625 7.30384766,0.00789063 8.35378906,0.00015625 9.43554688,-0.0078125 10.44681641,-0.00523437 11.45808594,-0.00265625 12.5,0 13.42353271,0.00225586 14.34706543,0.00451172 15.29858398,0.00683594 17.98499071,0.2829526 19.56328156,0.79402129 21.81640625,2.265625 23.92853129,5.43381256 24.14797089,7.39781752 24.375,11.1328125 23.40754734,14.82672265 21.93526503,16.06163146 18.81640625,18.265625 14.80314448,18.98253655 10.88230549,18.91788531 6.81640625,18.828125 5.73617188,18.83908203 4.6559375,18.85003906 3.54296875,18.86132812 -1.11569851,18.81819232 -4.27701882,18.78335039 -8.37109375,16.4453125 -10.9159845,13.38486199 -11.18359375,11.21220403 -11.18359375,7.265625 -8.74373623,1.77594559 -5.90492198,0.01444125 0,0z" />
+                                                                </DrawingGroup>
+                                                                <DrawingGroup Transform="1,0,0,1,238.875,408.75">
+                                                                    <GeometryDrawing
+                                                                        Brush="{StaticResource DefaultForegroundBrush}"
+                                                                        Geometry="F1 M512,512z M0,0z M0,0C1.49080078,-0.0309375 1.49080078,-0.0309375 3.01171875,-0.0625 12.22462116,-0.11183281 12.22462116,-0.11183281 16.125,3.25 17.70398053,6.40796107 17.94428171,9.85670636 17.125,13.25 15.3515625,15.9765625 15.3515625,15.9765625 12.125,18.25 8.11163358,18.96648273 4.19094375,18.90226129 0.125,18.8125 -0.95523438,18.82345703 -2.03546875,18.83441406 -3.1484375,18.84570312 -7.80817601,18.8025574 -10.96665673,18.77048626 -15.05859375,16.42578125 -17.64351952,13.32942931 -17.9441342,11.25978374 -17.875,7.25 -13.62564,-0.94519429 -8.30629701,0.04276086 0,0z" />
+                                                                </DrawingGroup>
+                                                            </DrawingGroup>
+                                                        </DrawingImage.Drawing>
+                                                    </DrawingImage>
+                                                </Image.Source>
+                                            </Image>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                </ContextMenu>
 
-                                <ItemsControl.Resources>
+                                <Style TargetType="DataGridRow" BasedOn="{StaticResource DataGridRowStyle}">
+                                    <Setter Property="ContextMenu" Value="{StaticResource RowContextMenu}" />
+                                </Style>
+                            </DataGrid.Resources>
 
-                                    <Style x:Key="ExpanderHeaderStyle" TargetType="ToggleButton">
-                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                        <Setter Property="VerticalContentAlignment" Value="Center" />
-                                        <Setter Property="Background" Value="Transparent" />
-                                        <Setter Property="Foreground" Value="{StaticResource DefaultForegroundBrush}" />
-                                        <Setter Property="Padding" Value="6" />
-                                        <Setter Property="Template">
-                                            <Setter.Value>
-                                                <ControlTemplate TargetType="ToggleButton">
-                                                    <Border Background="{TemplateBinding Background}"
-                                                            Padding="{TemplateBinding Padding}"
-                                                            CornerRadius="3">
-                                                        <DockPanel>
-                                                            <Path x:Name="Arrow"
-                                                                  Data="M 0 0 L 6 6 L 12 0"
-                                                                  Stroke="{TemplateBinding Foreground}"
-                                                                  StrokeThickness="2"
-                                                                  VerticalAlignment="Center"
-                                                                  HorizontalAlignment="Right"
-                                                                  Margin="5,0,0,0"
-                                                                  RenderTransformOrigin="0.5, 0.5">
-                                                                <Path.RenderTransform>
-                                                                    <RotateTransform Angle="0" />
-                                                                </Path.RenderTransform>
-                                                            </Path>
-                                                            <ContentPresenter VerticalAlignment="Center"
-                                                                              DockPanel.Dock="Left"
-                                                                              Margin="10, 0, 0, 0" />
-                                                        </DockPanel>
-                                                    </Border>
-                                                    <ControlTemplate.Triggers>
-                                                        <Trigger Property="IsChecked" Value="True">
-                                                            <Setter TargetName="Arrow" Property="RenderTransform">
-                                                                <Setter.Value>
-                                                                    <RotateTransform Angle="180" />
-                                                                </Setter.Value>
-                                                            </Setter>
-                                                        </Trigger>
-                                                    </ControlTemplate.Triggers>
-                                                </ControlTemplate>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Style>
+                            <DataGrid.Columns>
+                                <DataGridTextColumn
+                                    MinWidth="40"
+                                    MaxWidth="40"
+                                    IsReadOnly="True"
+                                    Binding="{Binding Number}"
+                                    ElementStyle="{StaticResource TextCenteredTextBlockStyle}"
+                                    Header="№" />
+                                <DataGridTextColumn
+                                    MinWidth="300"
+                                    IsReadOnly="True"
+                                    ElementStyle="{StaticResource TextWrappedTextBlockStyle}"
+                                    Binding="{Binding Text}"
+                                    Header="Текст вопроса" />
 
-                                    <Style TargetType="Expander">
-                                        <Setter Property="Padding" Value="10" />
-                                        <Setter Property="Template">
-                                            <Setter.Value>
-                                                <ControlTemplate TargetType="Expander">
+                                <DataGridTemplateColumn Header="Ответ"
+                                                        MinWidth="100"
+                                                        MaxWidth="150">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Style="{StaticResource TextCenteredTextBlockStyle}"
+                                                       Text="{Binding Answer.DisplayName}" />
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+
+                                    <DataGridTemplateColumn.CellEditingTemplate>
+                                        <DataTemplate>
+                                            <ComboBox
+                                                ItemsSource="{Binding DataContext.SelectedQuestionnaire.Type.Value, Converter={StaticResource QuestionnaireTypeAnswersConverter}, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                SelectedItem="{Binding Answer}"
+                                                Padding="5"
+                                                DisplayMemberPath="DisplayName">
+                                                <ComboBox.Style>
+                                                    <Style TargetType="ComboBox"
+                                                           BasedOn="{StaticResource DefaultComboBoxStyle}">
+                                                        <Style.Triggers>
+                                                            <Trigger Property="IsDropDownOpen" Value="True">
+                                                                <Setter Property="BorderThickness" Value="0" />
+                                                            </Trigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </ComboBox.Style>
+                                            </ComboBox>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellEditingTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </TabItem>
+
+                <TabItem Header="Дополнительная информация">
+                    <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                                  VerticalScrollBarVisibility="Auto">
+                        <ItemsControl BorderThickness="0"
+                                      ItemsSource="{Binding SelectedQuestionnaire.AdditionalInformation}">
+
+                            <ItemsControl.Resources>
+
+                                <Style x:Key="ExpanderHeaderStyle" TargetType="ToggleButton">
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                    <Setter Property="VerticalContentAlignment" Value="Center" />
+                                    <Setter Property="Background" Value="Transparent" />
+                                    <Setter Property="Foreground" Value="{StaticResource DefaultForegroundBrush}" />
+                                    <Setter Property="Padding" Value="6" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="ToggleButton">
+                                                <Border Background="{TemplateBinding Background}"
+                                                        Padding="{TemplateBinding Padding}"
+                                                        CornerRadius="3">
                                                     <DockPanel>
-                                                        <ToggleButton
-                                                            IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
-                                                            Content="{TemplateBinding Header}"
-                                                            Style="{StaticResource ExpanderHeaderStyle}"
-                                                            DockPanel.Dock="Top" />
-                                                        <ContentPresenter x:Name="ExpandSite"
-                                                                          Visibility="Collapsed"
-                                                                          Focusable="false"
-                                                                          Margin="{TemplateBinding Padding}" />
+                                                        <Path x:Name="Arrow"
+                                                              Data="M 0 0 L 6 6 L 12 0"
+                                                              Stroke="{TemplateBinding Foreground}"
+                                                              StrokeThickness="2"
+                                                              VerticalAlignment="Center"
+                                                              HorizontalAlignment="Right"
+                                                              Margin="5,0,0,0"
+                                                              RenderTransformOrigin="0.5, 0.5">
+                                                            <Path.RenderTransform>
+                                                                <RotateTransform Angle="0" />
+                                                            </Path.RenderTransform>
+                                                        </Path>
+                                                        <ContentPresenter VerticalAlignment="Center"
+                                                                          DockPanel.Dock="Left"
+                                                                          Margin="10, 0, 0, 0" />
                                                     </DockPanel>
-                                                    <ControlTemplate.Triggers>
-                                                        <Trigger Property="IsExpanded" Value="True">
-                                                            <Setter TargetName="ExpandSite" Property="Visibility"
-                                                                    Value="Visible" />
-                                                        </Trigger>
-                                                    </ControlTemplate.Triggers>
-                                                </ControlTemplate>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Style>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsChecked" Value="True">
+                                                        <Setter TargetName="Arrow" Property="RenderTransform">
+                                                            <Setter.Value>
+                                                                <RotateTransform Angle="180" />
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
 
-                                </ItemsControl.Resources>
+                                <Style TargetType="Expander">
+                                    <Setter Property="Padding" Value="10" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Expander">
+                                                <DockPanel>
+                                                    <ToggleButton
+                                                        IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
+                                                        Content="{TemplateBinding Header}"
+                                                        Style="{StaticResource ExpanderHeaderStyle}"
+                                                        DockPanel.Dock="Top" />
+                                                    <ContentPresenter x:Name="ExpandSite"
+                                                                      Visibility="Collapsed"
+                                                                      Focusable="false"
+                                                                      Margin="{TemplateBinding Padding}" />
+                                                </DockPanel>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsExpanded" Value="True">
+                                                        <Setter TargetName="ExpandSite" Property="Visibility"
+                                                                Value="Visible" />
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
 
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Expander Header="{Binding Key}"
-                                                  Foreground="{StaticResource DefaultForegroundBrush}"
-                                                  FontSize="16">
-                                            <TextBlock
-                                                Text="{Binding Value}"
-                                                FontWeight="450"
-                                                TextAlignment="Justify"
-                                                TextWrapping="Wrap" />
-                                        </Expander>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </ScrollViewer>
-                    </TabItem>
-                </TabControl>
+                            </ItemsControl.Resources>
 
-            </Grid>
-        </DockPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Expander Header="{Binding Key}"
+                                              Foreground="{StaticResource DefaultForegroundBrush}"
+                                              FontSize="16">
+                                        <TextBlock
+                                            Text="{Binding Value}"
+                                            FontWeight="450"
+                                            TextAlignment="Justify"
+                                            TextWrapping="Wrap" />
+                                    </Expander>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </TabItem>
+            </TabControl>
+
+        </Grid>
     </Grid>
 
 </Window>

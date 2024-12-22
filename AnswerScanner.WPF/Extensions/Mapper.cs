@@ -1,4 +1,5 @@
-﻿using AnswerScanner.WPF.Services.Responses;
+﻿using System.Collections.ObjectModel;
+using AnswerScanner.WPF.Services.Responses;
 using AnswerScanner.WPF.ViewModels;
 
 namespace AnswerScanner.WPF.Extensions;
@@ -11,7 +12,7 @@ public static class Mapper
         {
             Name = name,
             FilePath = filePath,
-            Questions = questionnaire.Questions.Select(e => e.ToViewModel()).ToList(),
+            Questions = new ObservableCollection<QuestionViewModel>(questionnaire.Questions.Select(e => e.ToViewModel())),
             AdditionalInformation = questionnaire.AdditionalInformation.Select(e => new AdditionalInformationItemViewModel(e.Key, e.Value)).ToList(),
             Type = questionnaire.Type.ToViewModel(),
         };
@@ -27,7 +28,7 @@ public static class Mapper
         };
     }
 
-    private static EnumViewModel<T> ToViewModel<T>(this T @enum) where T : Enum
+    public static EnumViewModel<T> ToViewModel<T>(this T @enum) where T : Enum
     {
         return new EnumViewModel<T>(@enum);
     }

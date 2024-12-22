@@ -81,6 +81,7 @@ internal class Program
 
         collection.AddTransient<QuestionnairesExportWindow>();
         
+        collection.AddTransient<QuestionAddWindow>();
     }
 
     private static LoggerConfiguration GetLoggerConfiguration()

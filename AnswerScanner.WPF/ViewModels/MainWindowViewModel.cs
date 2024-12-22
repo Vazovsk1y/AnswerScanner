@@ -20,23 +20,27 @@ internal partial class MainWindowViewModel :
 
     [ObservableProperty]
     private QuestionnaireViewModel? _selectedQuestionnaire;
-
+    
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(DropCommand))]
+    private bool _isDropCommandEnabled = true;
+    
     public MainWindowViewModel()
     {
         IsActive = true;
     }
 
     [RelayCommand]
-    private static void UploadQuestionnaires()
+    private void UploadQuestionnaires()
     {
         using var scope = App.Services.CreateScope(); 
         var window = scope.ServiceProvider.GetRequiredService<QuestionnairesUploadWindow>();
         var viewModel = scope.ServiceProvider.GetRequiredService<QuestionnairesUploadViewModel>();
 
-        // TODO: Migrate to MVVM.
-        
+        IsDropCommandEnabled = false;
         window.DataContext = viewModel;
         window.ShowDialog();
+        IsDropCommandEnabled = true;
     }
     
     [RelayCommand]
@@ -58,8 +62,8 @@ internal partial class MainWindowViewModel :
         window.ShowDialog();
     }
 
-    [RelayCommand]
-    private static void OnDrop(object parameter)
+    [RelayCommand(CanExecute = nameof(CanDrop))]
+    private void OnDrop(object parameter)
     {
         if (parameter is not DragEventArgs args)
         {
@@ -86,8 +90,6 @@ internal partial class MainWindowViewModel :
             });
         }
 
-        // TODO: Migrate to MVVM.
-        
         var mainWindow = scope.ServiceProvider.GetRequiredService<MainWindow>();
         mainWindow.IsEnabled = false;
         questionnairesUploadWindow.Closed += OnWidowClosed;
@@ -97,13 +99,100 @@ internal partial class MainWindowViewModel :
         questionnairesUploadWindow.DataContext = viewModel;
         questionnairesUploadWindow.Owner = mainWindow;
         questionnairesUploadWindow.Show();
+        IsDropCommandEnabled = false;
         return;
 
         void OnWidowClosed(object? sender, EventArgs e)
         {
             mainWindow.IsEnabled = true;
             questionnairesUploadWindow.Closed -= OnWidowClosed;
+            IsDropCommandEnabled = true;
         }
+    }
+
+    private bool CanDrop() => IsDropCommandEnabled;
+
+    [RelayCommand]
+    private void SelectFiles()
+    {
+        var fileNames = DialogsHelper.ShowSelectAvailableToUploadFilesDialog();
+        if (fileNames.Length == 0)
+        {
+            return;
+        }
+        
+        using var scope = App.Services.CreateScope(); 
+        var vm = scope.ServiceProvider.GetRequiredService<QuestionnairesUploadViewModel>();
+        var questionnairesUploadWindow = scope.ServiceProvider.GetRequiredService<QuestionnairesUploadWindow>();
+        
+        foreach (var file in fileNames)
+        {
+            vm.SelectedFiles.Add(new SelectedFileViewModel
+            {
+                FilePath = file, 
+                SelectedQuestionnaireType = vm.SelectedQuestionnaireType, 
+                IsProcessed = false
+            });
+        }
+        
+        IsDropCommandEnabled = false;
+        questionnairesUploadWindow.DataContext = vm;
+        questionnairesUploadWindow.ShowDialog();
+        IsDropCommandEnabled = true;
+    }
+
+    [RelayCommand]
+    private void OpenQuestionAddBeforeDialog(QuestionViewModel? question)
+    {
+        if (question is null || 
+            SelectedQuestionnaire is null || 
+            question.Number <= 1 ||
+            question.Number - 1 is var newNumber && SelectedQuestionnaire.Questions.Any(q => q.Number == newNumber) ||
+            SelectedQuestionnaire.Questions.IndexOf(question) is var questionIndex && questionIndex == -1)
+        {
+            return;
+        }
+        
+        var vm = new QuestionAddViewModel
+        {
+            Questionnaire = SelectedQuestionnaire,
+            QuestionNumber = newNumber,
+            QuestionIndex = questionIndex,
+        };
+
+        using var scope = App.Services.CreateScope();
+        var window = scope.ServiceProvider.GetRequiredService<QuestionAddWindow>();
+        IsDropCommandEnabled = false;
+        window.DataContext = vm;
+        window.ShowDialog();
+        IsDropCommandEnabled = true;
+    }
+    
+    [RelayCommand]
+    private void OpenQuestionAddAfterDialog(QuestionViewModel? question)
+    {
+        if (question is null || 
+            SelectedQuestionnaire is null ||
+            question.Number < 1 ||
+            question.Number + 1 is var newNumber && SelectedQuestionnaire.Questions.Any(q => q.Number == newNumber) ||
+            SelectedQuestionnaire.Questions.IndexOf(question) is var questionIndex && questionIndex == -1)
+        {
+            return;
+        }
+        
+        var vm = new QuestionAddViewModel
+        {
+            Questionnaire = SelectedQuestionnaire,
+            QuestionNumber = newNumber,
+            QuestionIndex = questionIndex + 1,
+        };
+
+        IsDropCommandEnabled = false;
+        using var scope = App.Services.CreateScope();
+        var window = scope.ServiceProvider.GetRequiredService<QuestionAddWindow>();
+        window.DataContext = vm;
+        window.ShowDialog();
+        IsDropCommandEnabled = true;
     }
     
     public void Receive(QuestionnairesReadMessage message)

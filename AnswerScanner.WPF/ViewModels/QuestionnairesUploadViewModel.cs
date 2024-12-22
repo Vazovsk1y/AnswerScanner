@@ -55,21 +55,9 @@ public partial class QuestionnairesUploadViewModel : ObservableRecipient
     [RelayCommand]
     private void SelectFiles()
     {
-        const string title = "Выберите файлы:";
-        const string filter = "Files|*.pdf;*.jpg;*.jpeg";
-
-        var fileDialog = new Microsoft.Win32.OpenFileDialog
-        {
-            Title = title,
-            RestoreDirectory = true,
-            Multiselect = true,
-            Filter = filter,
-        };
-
-        fileDialog.ShowDialog();
-
+        var fileNames = DialogsHelper.ShowSelectAvailableToUploadFilesDialog();
         SelectedFiles.Clear();
-        foreach (var file in fileDialog.FileNames)
+        foreach (var file in fileNames)
         {
             SelectedFiles.Add(new SelectedFileViewModel
             {
@@ -95,7 +83,8 @@ public partial class QuestionnairesUploadViewModel : ObservableRecipient
         IsUploadingRunning = true;
         IsCancellingEnabled = true;
         
-        var factory = App.Services.GetRequiredService<IQuestionnaireParserFactory>();
+        var scope = App.Services.CreateScope();
+        var factory = scope.ServiceProvider.GetRequiredService<IQuestionnaireParserFactory>();
         
         _filesParsingCts = new CancellationTokenSource();
         var parallelOptions = new ParallelOptions

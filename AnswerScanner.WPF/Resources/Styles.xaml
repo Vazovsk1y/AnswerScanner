@@ -543,6 +543,10 @@
     <Style TargetType="DataGridRow">
         <Setter Property="Background" Value="{StaticResource HeaderBackgroundBrush}" />
     </Style>
+    
+    <Style TargetType="DataGridRow" x:Key="DataGridRowStyle">
+        <Setter Property="Background" Value="{StaticResource HeaderBackgroundBrush}" />
+    </Style>
 
     <Style TargetType="DataGridCell">
         <Setter Property="BorderThickness" Value="0" />
