@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:b="clr-namespace:Microsoft.Xaml.Behaviors;assembly=Microsoft.Xaml.Behaviors"
+    xmlns:app="clr-namespace:AnswerScanner.WPF"
     xmlns:viewmodels="clr-namespace:AnswerScanner.WPF.ViewModels"
     Background="{StaticResource MainWindowBackgroundBrush}"
     FontFamily="{StaticResource DefaultFontFamily}"
@@ -44,10 +45,10 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Grid DockPanel.Dock="Top"
-              Background="{StaticResource HeaderBackgroundBrush}">
+        <Grid Background="{StaticResource HeaderBackgroundBrush}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
@@ -895,6 +896,12 @@
             </TabControl>
 
         </Grid>
+        
+        <TextBlock Grid.Row="2" 
+                   Text="{x:Static app:App.Version}"
+                   Foreground="{StaticResource DefaultIsMouseOverBrush}"
+                   Margin="5"
+                   FontWeight="500"/>
     </Grid>
 
 </Window>
