@@ -10,7 +10,8 @@ internal class QuestionsExtractorFactory : IQuestionsExtractorFactory
     {
         return questionnaireType switch
         {
-            QuestionnaireType.YesNoPossibleAnswers => App.Services.GetRequiredService<YesNoPossibleAnswersQuestionsExtractor>(),
+            QuestionnaireType.YesNoAnswerOptions => App.Services.GetRequiredService<YesNoAnswerOptionsQuestionsExtractor>(),
+            QuestionnaireType.FiveAnswerOptions => App.Services.GetRequiredService<FiveAnswerOptionsQuestionsExtractor>(),
             _ => throw new ArgumentException(questionnaireType.ToString()),
         };
     }

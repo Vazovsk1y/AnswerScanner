@@ -3,16 +3,11 @@ using System.Windows.Input;
 
 namespace AnswerScanner.WPF.Views.Windows;
 
-/// <summary>
-/// Interaction logic for MainWindow.xaml
-/// </summary>
-public partial class MainWindow : Window
+public partial class QuestionnairesExportWindow : Window
 {
-    public MainWindow()
+    public QuestionnairesExportWindow()
     {
         InitializeComponent();
-        MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight;
-        MaxWidth = SystemParameters.MaximizedPrimaryScreenWidth;
     }
 
     private void StartWindowMoving(object sender, MouseButtonEventArgs e)

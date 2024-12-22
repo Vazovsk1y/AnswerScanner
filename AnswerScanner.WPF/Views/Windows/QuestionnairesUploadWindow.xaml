@@ -1,0 +1,225 @@
+﻿<Window
+    x:Class="AnswerScanner.WPF.Views.Windows.QuestionnairesUploadWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodels="clr-namespace:AnswerScanner.WPF.ViewModels"
+    xmlns:infr="clr-namespace:AnswerScanner.WPF.Infrastructure"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:b="clr-namespace:Microsoft.Xaml.Behaviors;assembly=Microsoft.Xaml.Behaviors"
+    MouseDown="StartWindowMoving"
+    x:Name="Window"
+    Width="1000"
+    Title="Загрузка опросников"
+    Height="600"
+    AllowDrop="True"
+    WindowStyle="None"
+    Style="{StaticResource DialogWindowStyle}"
+    d:DataContext="{d:DesignInstance Type=viewmodels:QuestionnairesUploadViewModel}"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
+    
+    <i:Interaction.Triggers>
+        <b:EventTrigger EventName="Drop">
+            <infr:DragEventToCommand Command="{Binding DropCommand}"/>
+        </b:EventTrigger>
+    </i:Interaction.Triggers>
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome CornerRadius="0"
+                      CaptionHeight="0"
+                      GlassFrameThickness="0" />
+    </WindowChrome.WindowChrome>
+
+    <Window.Resources>
+        <infr:BoolVisibilityConverter x:Key="BoolVisibilityConverter"></infr:BoolVisibilityConverter>
+    </Window.Resources>
+
+    <Grid Background="{StaticResource MainWindowBackgroundBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid Background="{StaticResource HeaderBackgroundBrush}"
+              MinHeight="40">
+            <StackPanel HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal"
+                        Margin="10, 0, 0, 0">
+                <Image Source="{StaticResource Logo}"
+                       Width="25"
+                       Height="25" />
+                <TextBlock
+                    Margin="10, 0, 0, 0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Foreground="{StaticResource DefaultForegroundBrush}"
+                    FontSize="18"
+                    FontWeight="600"
+                    Text="Окно загрузки опросников" />
+            </StackPanel>
+
+            <Button Style="{StaticResource CloseWindowButtonStyle}"
+                    HorizontalAlignment="Right"
+                    IsEnabled="{Binding IsEditable}" />
+        </Grid>
+
+        <StackPanel Grid.Row="1" Margin="5, 10, 0, 0">
+            <StackPanel.Resources>
+                <Style TargetType="TextBlock">
+                    <Setter Property="Foreground" Value="{StaticResource DefaultForegroundBrush}" />
+                </Style>
+            </StackPanel.Resources>
+
+            <StackPanel Margin="5,0,10,0" IsEnabled="{Binding IsEditable}">
+                <StackPanel HorizontalAlignment="Left">
+                    <TextBlock FontSize="16" Text="Тип опросников:" />
+                    <ComboBox
+                        Style="{StaticResource DefaultComboBoxStyle}"
+                        MinWidth="300"
+                        MinHeight="40"
+                        Margin="0,10,0,0"
+                        DisplayMemberPath="DisplayName"
+                        FontSize="16"
+                        ItemsSource="{x:Static viewmodels:QuestionnairesUploadViewModel.AvailableQuestionnaireTypes}"
+                        SelectedItem="{Binding SelectedQuestionnaireType}" />
+                </StackPanel>
+                <Button
+                    Margin="0,10,0,0"
+                    HorizontalAlignment="Left"
+                    Style="{StaticResource SelectFilesButtonStyle}"
+                    Command="{Binding SelectFilesCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <Image
+                            Width="30"
+                            Height="30"
+                            Source="{StaticResource SelectFilesIcon}"
+                            Stretch="Fill">
+                        </Image>
+                        <TextBlock
+                            Margin="7, 0, 0, 0"
+                            VerticalAlignment="Center"
+                            FontSize="16"
+                            Text="Выбрать файлы"
+                            TextDecorations="Underline" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </StackPanel>
+
+        <DataGrid
+            Grid.Row="2"
+            VerticalAlignment="Top"
+            MaxHeight="400"
+            Margin="10,10,10,0"
+            Foreground="{StaticResource DefaultForegroundBrush}"
+            ColumnWidth="*"
+            FontSize="14"
+            ItemsSource="{Binding SelectedFiles}">
+            <DataGrid.Resources>
+                <CollectionViewSource x:Key="AvailableQuestionnaireTypes"
+                                      Source="{x:Static viewmodels:QuestionnairesUploadViewModel.AvailableQuestionnaireTypes}" />
+                
+                <Style x:Key="CheckBoxStyle" TargetType="CheckBox">
+                    <Setter Property="VerticalAlignment" Value="Center" />
+                    <Setter Property="HorizontalAlignment" Value="Center" />
+                    <Setter Property="IsEnabled" Value="False" />
+                </Style>
+            </DataGrid.Resources>
+            <DataGrid.Columns>
+                <DataGridTextColumn IsReadOnly="True"
+                                    Binding="{Binding FilePath}"
+                                    ElementStyle="{StaticResource TextWrappedTextBlockStyle}"
+                                    MinWidth="300"
+                                    Header="Файл" />
+
+                <DataGridTemplateColumn Header="Тип опросника"
+                                        MinWidth="200"
+                                        MaxWidth="250">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Style="{StaticResource TextCenteredTextBlockStyle}"
+                                       Text="{Binding SelectedQuestionnaireType.DisplayName}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <ComboBox ItemsSource="{Binding Source={StaticResource AvailableQuestionnaireTypes}}"
+                                      SelectedItem="{Binding SelectedQuestionnaireType}"
+                                      IsEnabled="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType=Window}}"
+                                      Padding="5"
+                                      DisplayMemberPath="DisplayName">
+                                <ComboBox.Style>
+                                    <Style TargetType="ComboBox" BasedOn="{StaticResource DefaultComboBoxStyle}">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsDropDownOpen" Value="True">
+                                                <Setter Property="BorderThickness" Value="0" />
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ComboBox.Style>
+                            </ComboBox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridCheckBoxColumn Header="Статус"
+                                        MinWidth="100"
+                                        MaxWidth="100"
+                                        ElementStyle="{StaticResource CheckBoxStyle}"
+                                        EditingElementStyle="{StaticResource CheckBoxStyle}"
+                                        Binding="{Binding IsProcessed}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <Grid Grid.Row="3" Margin="10,15,10,8">
+            <StackPanel Visibility="{Binding IsUploadingRunning, Converter={StaticResource BoolVisibilityConverter}}"
+                        HorizontalAlignment="Left"
+                        Orientation="Horizontal">
+                <StackPanel.Resources>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Margin" Value="5, 5, 0, 0" />
+                        <Setter Property="FontSize" Value="14" />
+                        <Setter Property="FontWeight" Value="500" />
+                        <Setter Property="VerticalAlignment" Value="Center" />
+                        <Setter Property="Foreground" Value="{StaticResource DefaultForegroundBrush}" />
+                    </Style>
+                </StackPanel.Resources>
+                <ProgressBar MinWidth="150"
+                             Height="30"
+                             BorderThickness="0"
+                             Foreground="{StaticResource IconBrush}"
+                             Background="{StaticResource DefaultIsMouseOverBrush}"
+                             Maximum="{Binding MaxProgress}"
+                             Value="{Binding Progress}" />
+                <TextBlock Text="Загружено" />
+                <TextBlock Text="{Binding Progress}" />
+                <TextBlock Text="из" />
+                <TextBlock Text="{Binding MaxProgress}" />
+            </StackPanel>
+
+            <StackPanel
+                HorizontalAlignment="Right"
+                Orientation="Horizontal">
+                <Button
+                    Margin="0,0,10,0"
+                    Command="{Binding ConfirmCommand}"
+                    Style="{StaticResource ConfirmButtonStyle}"
+                    Content="Подтвердить"
+                    MinWidth="130"
+                    FontSize="13"
+                    CommandParameter="{Binding ElementName=Window}" />
+                <Button Content="Отмена"
+                        MinWidth="130"
+                        Style="{StaticResource CancelButtonStyle}"
+                        FontSize="13"
+                        Command="{Binding CancelCommand}" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

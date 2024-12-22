@@ -1,0 +1,90 @@
+﻿<Window x:Class="AnswerScanner.WPF.Views.Windows.QuestionAddWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:vms="clr-namespace:AnswerScanner.WPF.ViewModels"
+        WindowStartupLocation="CenterScreen"
+        Title="Вставить вопрос"
+        xmlns:infr="clr-namespace:AnswerScanner.WPF.Infrastructure"
+        d:DataContext="{d:DesignInstance Type=vms:QuestionAddViewModel}"
+        Height="370"
+        Width="400"
+        WindowStyle="None"
+        Style="{StaticResource DialogWindowStyle}"
+        mc:Ignorable="d">
+    <WindowChrome.WindowChrome>
+        <WindowChrome CornerRadius="0"
+                      CaptionHeight="0"
+                      GlassFrameThickness="0" />
+    </WindowChrome.WindowChrome>
+
+    <Window.Resources>
+        <infr:QuestionnaireTypeAnswersConverter x:Key="QuestionnaireTypeAnswersConverter" />
+    </Window.Resources>
+
+    <Grid Background="{StaticResource MainWindowBackgroundBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid Background="{StaticResource HeaderBackgroundBrush}"
+              MinHeight="40">
+            <StackPanel HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal"
+                        Margin="10, 0, 0, 0">
+                <Image Source="{StaticResource Logo}"
+                       Width="25"
+                       Height="25" />
+                <TextBlock
+                    Margin="10, 0, 0, 0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Foreground="{StaticResource DefaultForegroundBrush}"
+                    FontSize="18"
+                    FontWeight="600"
+                    Text="{Binding QuestionNumber, StringFormat='Вставить вопрос № {0}'}" />
+            </StackPanel>
+
+            <Button Style="{StaticResource CloseWindowButtonStyle}"
+                    HorizontalAlignment="Right" />
+        </Grid>
+
+        <Border Padding="20" Grid.Row="1">
+            <StackPanel>
+                <StackPanel.Resources>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Foreground" Value="{StaticResource DefaultForegroundBrush}" />
+                        <Setter Property="FontSize" Value="16" />
+                        <Setter Property="FontWeight" Value="600" />
+                    </Style>
+                </StackPanel.Resources>
+                <TextBlock Text="Текст вопроса:" />
+                <TextBox MinHeight="130"
+                         Text="{Binding QuestionText, UpdateSourceTrigger=PropertyChanged}"
+                         Style="{StaticResource DefaultTextBoxStyle}"
+                         Margin="0, 5, 0, 5"
+                         TextWrapping="Wrap" />
+                <TextBlock Text="Ответ:" />
+                <ComboBox Style="{StaticResource DefaultComboBoxStyle}"
+                          ItemsSource="{Binding Questionnaire.Type.Value, Converter={StaticResource QuestionnaireTypeAnswersConverter}}"
+                          Margin="0, 5, 0, 0"
+                          SelectedItem="{Binding Answer}"
+                          FontSize="16"
+                          Padding="5"
+                          DisplayMemberPath="DisplayName" />
+            </StackPanel>
+        </Border>
+
+        <Button Grid.Row="2"
+                HorizontalAlignment="Right"
+                Content="Подтвердить"
+                Style="{StaticResource ConfirmButtonStyle}"
+                Command="{Binding ConfirmCommand}"
+                CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
+                Margin="0, 0, 20, 10" />
+    </Grid>
+</Window>

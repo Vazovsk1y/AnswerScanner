@@ -38,7 +38,7 @@ internal class Program
         try
         {
             App app = new();
-            // app.InitializeComponent();
+            app.InitializeComponent();
             app.Run();
         }
         catch (Exception ex)
@@ -65,12 +65,23 @@ internal class Program
         collection.AddSingleton<MainWindow>();
         collection.AddSingleton<MainWindowViewModel>();
 
-        collection.AddSingleton<IQuestionnaireReaderFactory, QuestionnaireReaderFactory>();
-        collection.AddTransient<PdfQuestionnaireReader>();
-        collection.AddTransient<ImageQuestionnaireReader>();
+        collection.AddSingleton<IQuestionnaireParserFactory, QuestionnaireParserFactory>();
+        collection.AddTransient<PdfQuestionnaireParser>();
+        collection.AddTransient<SimpleImageQuestionnaireParser>();
 
         collection.AddSingleton<IQuestionsExtractorFactory, QuestionsExtractorFactory>();
-        collection.AddTransient<YesNoPossibleAnswersQuestionsExtractor>();
+        collection.AddTransient<YesNoAnswerOptionsQuestionsExtractor>();
+        collection.AddTransient<FiveAnswerOptionsQuestionsExtractor>();
+
+        collection.AddTransient<QuestionnairesUploadWindow>();
+        collection.AddTransient<QuestionnairesUploadViewModel>();
+        
+        collection.AddSingleton<IQuestionnaireFileExporterFactory, QuestionnaireFileExporterFactory>();
+        collection.AddTransient<QuestionnaireXlsxFileExporter>();
+
+        collection.AddTransient<QuestionnairesExportWindow>();
+        
+        collection.AddTransient<QuestionAddWindow>();
     }
 
     private static LoggerConfiguration GetLoggerConfiguration()

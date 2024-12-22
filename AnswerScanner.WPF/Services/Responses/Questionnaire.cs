@@ -3,7 +3,6 @@
 namespace AnswerScanner.WPF.Services.Responses;
 
 public record Questionnaire(
-    string? FilePath,
     QuestionnaireType Type,
     IReadOnlyDictionary<string, string> AdditionalInformation,
     IReadOnlyCollection<Question> Questions);
@@ -11,5 +10,8 @@ public record Questionnaire(
 public enum QuestionnaireType
 {
     [Display(Name = "Варианты ответа \"Да\" и \"Нет\"")]
-    YesNoPossibleAnswers,
+    YesNoAnswerOptions,
+    
+    [Display(Name = "5 вариантов ответа")]
+    FiveAnswerOptions,
 }

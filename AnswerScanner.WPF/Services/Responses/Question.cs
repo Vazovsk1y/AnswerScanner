@@ -16,5 +16,20 @@ public enum AnswerType
     Yes,
     
     [Display(Name = "Нет")]
-    No
+    No,
+    
+    [Display(Name = "Совсем нет")]
+    AbsolutelyNot,
+    
+    [Display(Name = "Немного")]
+    Slightly,
+    
+    [Display(Name = "Умеренно")]
+    Moderately,
+    
+    [Display(Name = "Сильно")]
+    Strongly,
+    
+    [Display(Name = "Очень сильно")]
+    VeryStrongly
 }
