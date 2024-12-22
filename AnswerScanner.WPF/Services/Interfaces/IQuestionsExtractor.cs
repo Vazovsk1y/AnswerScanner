@@ -6,7 +6,3 @@ public interface IQuestionsExtractor
 {
     QuestionsExtractionResult ExtractFromImage(byte[] imageBytes);
 }
-
-public record QuestionsExtractionResult(
-    IReadOnlyCollection<Question> Questions, 
-    IReadOnlyDictionary<string, string> AdditionalInformation);

@@ -40,14 +40,20 @@ internal partial class MainWindowViewModel :
     }
     
     [RelayCommand]
-    private static void ExportQuestionnaires()
+    private void ExportQuestionnaires()
     {
+        if (UploadedQuestionnaires is null || UploadedQuestionnaires.Count == 0)
+        {
+            return;
+        }
+        
         using var scope = App.Services.CreateScope(); 
         var window = scope.ServiceProvider.GetRequiredService<QuestionnairesExportWindow>();
-        var viewModel = scope.ServiceProvider.GetRequiredService<QuestionnairesExportViewModel>();
+        var viewModel = new QuestionnairesExportViewModel
+        {
+            Questionnaires = UploadedQuestionnaires,
+        };
 
-        // TODO: Migrate to MVVM.
-        
         window.DataContext = viewModel;
         window.ShowDialog();
     }

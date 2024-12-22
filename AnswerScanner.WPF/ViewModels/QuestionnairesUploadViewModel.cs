@@ -17,7 +17,7 @@ public partial class QuestionnairesUploadViewModel : ObservableRecipient
 {
     public static readonly IEnumerable<EnumViewModel<QuestionnaireType>> AvailableQuestionnaireTypes = Enum
         .GetValues<QuestionnaireType>()
-        .Select(e => new EnumViewModel<QuestionnaireType>(e))
+        .Select(e => e.ToViewModel())
         .ToList();
     
     private readonly object _filesParsingCtsLock = new();
@@ -81,7 +81,7 @@ public partial class QuestionnairesUploadViewModel : ObservableRecipient
     }
 
     [RelayCommand]
-    private async Task Confirm(Window window) // TODO: Migrate to MVVM.
+    private async Task Confirm(Window window)
     {
         if (SelectedFiles.Count == 0 ||
             ConfirmCommand.IsRunning ||

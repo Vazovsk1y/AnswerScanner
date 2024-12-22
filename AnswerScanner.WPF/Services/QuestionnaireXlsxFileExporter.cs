@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using AnswerScanner.WPF.Services.Interfaces;
-using ClosedXML.Excel;
 using ClosedXML.Report;
 
 namespace AnswerScanner.WPF.Services;
@@ -13,33 +12,52 @@ internal class QuestionnaireXlsxFileExporter : IQuestionnaireFileExporter
     {
         using var templateStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(TemplateResourceName);
         using var template = new XLTemplate(templateStream);
-        
+
         var data = new
         {
             Questionnaires = questionnaires,
-            AnswerIndexes = Enumerable.Range(1, questionnaires.MaxBy(e => e.Questions.Count)?.Questions.Count ?? default),
+            AnswerIndexes =  Enumerable
+                .Range(1, questionnaires.MaxBy(e => e.Questions.Count)?.Questions.Count ?? default)
+                .ToList(),
         };
 
         template.AddVariable(data);
         template.Generate();
         
         var firstWs = template.Workbook.Worksheets.First();
-        for (var i = 0; i < questionnaires.Count; i++)
+
+        var rowIndex = 2;
+        const int rowsOffset = 3;
+        foreach (var item in questionnaires)
         {
-            var answers = questionnaires.ElementAt(i).Questions;
-            var columnIndex = i + 2;
-            var rowIndex = 2;
-            
-            for (var j = 0; j < answers.Count; j++)
+            var columnIndex = 2;
+            foreach (var question in item.Questions)
             {
-                rowIndex += 1;
-                var cell = firstWs.Cell(rowIndex, columnIndex);
-                cell.Value = answers.ElementAt(j).Answer;
-                cell.Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
+                if (data.AnswerIndexes.Contains(question.Number))
+                {
+                    var cell = firstWs.Cell(rowIndex, columnIndex);
+                    cell.Style.Font.FontName = "Arial";
+                    cell.Style.Font.FontSize = 12;
+                    cell.Value = question.Answer;
+                }
+                
+                columnIndex++;
+            }
+            rowIndex += rowsOffset;
+        }
+        
+        foreach (var column in firstWs.ColumnsUsed())
+        {
+            if (column.ColumnNumber() == 1)
+            {
+                column.AdjustToContents();
+            }
+            else
+            {
+                column.Width = 5;
             }
         }
         
-        firstWs.Columns().AdjustToContents();
         template.SaveAs(filePath);
     }
 }

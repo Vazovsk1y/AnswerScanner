@@ -8,7 +8,7 @@ public abstract partial class QuestionsExtractorBase
     protected const char QuestionEndingSign = ';';
     protected const int ThresholdValue = 175;
     
-    [GeneratedRegex(@"^(\d+)\.\s+(.+)$")]
+    [GeneratedRegex(@".*?(\d+)[.,]\s+(.+)$")]
     protected static partial Regex ContainsQuestion();
     
     protected static TesseractEngine CreateTesseractEngine()

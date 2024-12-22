@@ -143,7 +143,7 @@
                 Content="Подтвердить"
                 FontSize="14"
                 Style="{StaticResource ConfirmButtonStyle}"
-                CommandParameter="{Binding ElementName=Window}" />
+                CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" />
         </StackPanel>
 
     </Grid>

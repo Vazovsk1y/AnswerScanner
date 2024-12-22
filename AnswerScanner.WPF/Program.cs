@@ -80,7 +80,7 @@ internal class Program
         collection.AddTransient<QuestionnaireXlsxFileExporter>();
 
         collection.AddTransient<QuestionnairesExportWindow>();
-        collection.AddTransient<QuestionnairesExportViewModel>();
+        
     }
 
     private static LoggerConfiguration GetLoggerConfiguration()

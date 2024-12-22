@@ -12,4 +12,4 @@ public record QuestionnaireExportModel(
     
 public record QuestionExportModel(
     int Number,
-    string Answer);
+    int Answer);

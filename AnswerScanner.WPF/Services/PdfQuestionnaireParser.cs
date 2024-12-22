@@ -44,7 +44,7 @@ internal class PdfQuestionnaireParser : IQuestionnaireParser
 
             var questionsExtractionResult = questionsExtractor.ExtractFromImage(GetBytesFromStream(pageAsPng));
 
-            // TODO: Refactor.
+            // TODO: Refactor. Another data structure to represent inner 'AdditionalInformation' items?
             additionalInformation[$"Страница {page.Number}"] = string.Join($"{new string('-', 80)}\n",
                 questionsExtractionResult.AdditionalInformation.Select(e => $"{e.Key}:\n{e.Value}\n"));
             

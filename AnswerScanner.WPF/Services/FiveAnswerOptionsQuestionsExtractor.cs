@@ -48,7 +48,7 @@ public class FiveAnswerOptionsQuestionsExtractor : QuestionsExtractorBase, IQues
             ["Главный вопрос"] = header.mainQuestion
         };
 
-        using var ocrAppliedPage = ocrEngine.Process(pix);
+        using var ocrAppliedPage = ocrEngine.Process(pix, PageSegMode.SingleColumn);
 
         additionalInformation["Текст"] = ocrAppliedPage.GetText();
         additionalInformation["Значение \"Main Confidence\""] = ocrAppliedPage.GetMeanConfidence().ToString(CultureInfo.InvariantCulture);
