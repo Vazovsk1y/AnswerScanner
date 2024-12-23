@@ -1,16 +1,10 @@
-﻿using AnswerScanner.WPF.Services;
-using AnswerScanner.WPF.Services.Interfaces;
-using AnswerScanner.WPF.ViewModels;
-using AnswerScanner.WPF.Views.Windows;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Serilog;
+﻿using Serilog;
 using System.IO;
 using System.Windows;
 
 namespace AnswerScanner.WPF;
 
-internal class Program
+internal static class Program
 {
     private static bool IsInDebug { get; set; }
 
@@ -19,21 +13,20 @@ internal class Program
     [STAThread]
     public static void Main(string[] args)
     {
-
+        
 #if DEBUG
         IsInDebug = true;
 #endif
-
-        Log.Logger = GetLoggerConfiguration().CreateLogger();
-
-        Environment.SetEnvironmentVariable("DOTNET_ENVIRONMENT", IsInDebug ? "Development" : "Production");
-
-        _mutex = new Mutex(true, App.Title, out var createdNew);
+        
+        _mutex = new Mutex(true, App.Name, out var createdNew);
         if (!createdNew)
         {
             MessageBox.Show("Приложение уже запущено.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
         }
+
+        Environment.SetEnvironmentVariable("DOTNET_ENVIRONMENT", IsInDebug ? "Development" : "Production");
+        Log.Logger = GetLoggerConfiguration().CreateLogger();
 
         try
         {
@@ -45,43 +38,6 @@ internal class Program
         {
             Log.Fatal(ex, "Возникло исключение во время работы приложения.");
         }
-    }
-
-    public static IHostBuilder CreateHostBuilder(string[] args)
-    {
-        return Host
-            .CreateDefaultBuilder(args)
-            .ConfigureAppConfiguration((appConfig, _) =>
-            {
-                appConfig.HostingEnvironment.ApplicationName = App.Title;
-                appConfig.HostingEnvironment.ContentRootPath = Environment.CurrentDirectory;
-            })
-            .UseSerilog()
-            .ConfigureServices(ConfigureServices);
-    }
-
-    private static void ConfigureServices(HostBuilderContext context, IServiceCollection collection)
-    {
-        collection.AddSingleton<MainWindow>();
-        collection.AddSingleton<MainWindowViewModel>();
-
-        collection.AddSingleton<IQuestionnaireParserFactory, QuestionnaireParserFactory>();
-        collection.AddTransient<PdfQuestionnaireParser>();
-        collection.AddTransient<SimpleImageQuestionnaireParser>();
-
-        collection.AddSingleton<IQuestionsExtractorFactory, QuestionsExtractorFactory>();
-        collection.AddTransient<YesNoAnswerOptionsQuestionsExtractor>();
-        collection.AddTransient<FiveAnswerOptionsQuestionsExtractor>();
-
-        collection.AddTransient<QuestionnairesUploadWindow>();
-        collection.AddTransient<QuestionnairesUploadViewModel>();
-        
-        collection.AddSingleton<IQuestionnaireFileExporterFactory, QuestionnaireFileExporterFactory>();
-        collection.AddTransient<QuestionnaireXlsxFileExporter>();
-
-        collection.AddTransient<QuestionnairesExportWindow>();
-        
-        collection.AddTransient<QuestionAddWindow>();
     }
 
     private static LoggerConfiguration GetLoggerConfiguration()
