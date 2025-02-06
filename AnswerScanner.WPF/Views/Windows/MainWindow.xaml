@@ -39,6 +39,7 @@
         <infr:NullVisibilityConverter x:Key="NullVisibilityConverter" />
         <infr:QuestionnaireTypeAnswersConverter x:Key="QuestionnaireTypeAnswersConverter" />
         <infr:InverseNullVisibilityConverter x:Key="InverseNullVisibilityConverter" />
+        <infr:CollectionCountVisibilityConverter x:Key="CollectionCountVisibilityConverter"/>
     </Window.Resources>
 
     <Grid>
@@ -402,21 +403,58 @@
 
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Margin="15,15,15,10">
-                            <StackPanel.Resources>
+                        <Grid Margin="0,15,15,10">
+                            <Grid.Resources>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="FontSize" Value="16" />
+                                    <Setter Property="Foreground" Value="{StaticResource DefaultForegroundBrush}"/>
                                 </Style>
-                            </StackPanel.Resources>
-                            <TextBlock
-                                FontWeight="500"
-                                Text="{Binding FilePath}"
-                                TextDecorations="Underline" />
-                            <TextBlock Margin="0, 10, 0, 0"
-                                       Text="{Binding Questions.Count, StringFormat='Количество вопросов: {0}'}" />
-                            <TextBlock Margin="0, 10, 0, 0"
-                                       Text="{Binding Type.DisplayName, StringFormat='Тип опросника: {0}'}" />
-                        </StackPanel>
+                            </Grid.Resources>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            
+                            <StackPanel Margin="15, 0, 0, 0">
+                                <TextBlock
+                                    FontWeight="500"
+                                    Text="{Binding FilePath}"
+                                    TextDecorations="Underline" />
+                                <TextBlock Margin="0, 10, 0, 0"
+                                           Text="{Binding Questions.Count, StringFormat='Количество вопросов: {0}'}" />
+                                <TextBlock Margin="0, 10, 0, 0"
+                                           Text="{Binding Type.DisplayName, StringFormat='Тип опросника: {0}'}" />
+                            </StackPanel>
+                            
+                            <Expander Grid.Row="1"
+                                      Visibility="{Binding MissedQuestionNumbers.Count, Converter={StaticResource CollectionCountVisibilityConverter}}"
+                                      Margin="9, 6, 0, 0"
+                                      Padding="4, 0, 0, 0"
+                                      IsExpanded="True">
+                                <Expander.Header>
+                                    <TextBlock Foreground="Yellow" 
+                                        Text="{Binding MissedQuestionNumbers.Count, StringFormat='Количество пропущенных вопросов: {0}'}"/>
+                                </Expander.Header>
+                                <ItemsControl ItemsSource="{Binding MissedQuestionNumbers}"
+                                              HorizontalAlignment="Left"
+                                              HorizontalContentAlignment="Left">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel MaxWidth="600"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Padding="5"
+                                                       Foreground="{StaticResource DefaultForegroundBrush}"
+                                                       FontSize="14"
+                                                       Text="{Binding}"/>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Expander>
+                        </Grid>
+                        
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
@@ -738,10 +776,104 @@
                                             </Image>
                                         </MenuItem.Icon>
                                     </MenuItem>
+                                    <MenuItem Header="Удалить"
+                                              Command="{Binding DataContext.RemoveQuestionCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                              CommandParameter="{Binding}">
+                                        <MenuItem.Icon>
+                                            <Image>
+                                                <Image.Source>
+                                                    <DrawingImage>
+                                                        <DrawingImage.Drawing>
+                                                            <DrawingGroup>
+                                                                <GeometryDrawing>
+                                                                    <GeometryDrawing.Geometry>
+                                                                        <PathGeometry>
+                                                                            <PathGeometry.Figures>
+                                                                                <PathFigure IsClosed="False"
+                                                                                    StartPoint="20,9">
+                                                                                    <PathFigure.Segments>
+                                                                                        <LineSegment
+                                                                                            Point="18.005,20.3463" />
+                                                                                        <LineSegment Point="16.0353,22" />
+                                                                                        <LineSegment Point="7.96474,22" />
+                                                                                        <LineSegment
+                                                                                            Point="5.99496,20.3463" />
+                                                                                        <LineSegment Point="4,9" />
+                                                                                    </PathFigure.Segments>
+                                                                                </PathFigure>
+                                                                            </PathGeometry.Figures>
+                                                                        </PathGeometry>
+                                                                    </GeometryDrawing.Geometry>
+                                                                    <GeometryDrawing.Pen>
+                                                                        <Pen
+                                                                            Brush="White"
+                                                                            StartLineCap="Round"
+                                                                            LineJoin="Round"
+                                                                            Thickness="1.5" />
+                                                                    </GeometryDrawing.Pen>
+                                                                </GeometryDrawing>
+
+                                                                <GeometryDrawing>
+                                                                    <GeometryDrawing.Geometry>
+                                                                        <PathGeometry>
+                                                                            <PathGeometry.Figures>
+                                                                                <PathFigure IsClosed="False"
+                                                                                    StartPoint="21,6">
+                                                                                    <PathFigure.Segments>
+                                                                                        <LineSegment Point="15.375,6" />
+                                                                                    </PathFigure.Segments>
+                                                                                </PathFigure>
+                                                                                <PathFigure IsClosed="False"
+                                                                                    StartPoint="3,6">
+                                                                                    <PathFigure.Segments>
+                                                                                        <LineSegment Point="8.625,6" />
+                                                                                    </PathFigure.Segments>
+                                                                                </PathFigure>
+                                                                                <PathFigure IsClosed="False"
+                                                                                    StartPoint="8.625,6">
+                                                                                    <PathFigure.Segments>
+                                                                                        <LineSegment Point="8.625,4" />
+                                                                                        <LineSegment Point="10.625,2" />
+                                                                                        <LineSegment Point="13.375,2" />
+                                                                                        <LineSegment Point="15.375,4" />
+                                                                                        <LineSegment Point="15.375,6" />
+                                                                                        <LineSegment Point="8.625,6" />
+                                                                                    </PathFigure.Segments>
+                                                                                </PathFigure>
+                                                                            </PathGeometry.Figures>
+                                                                        </PathGeometry>
+                                                                    </GeometryDrawing.Geometry>
+                                                                    <GeometryDrawing.Pen>
+                                                                        <Pen
+                                                                            Brush="White"
+                                                                            StartLineCap="Round"
+                                                                            LineJoin="Round"
+                                                                            Thickness="1.5" />
+                                                                    </GeometryDrawing.Pen>
+                                                                </GeometryDrawing>
+                                                            </DrawingGroup>
+                                                        </DrawingImage.Drawing>
+                                                    </DrawingImage>
+                                                </Image.Source>
+                                            </Image>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
                                 </ContextMenu>
 
                                 <Style TargetType="DataGridRow" BasedOn="{StaticResource DataGridRowStyle}">
                                     <Setter Property="ContextMenu" Value="{StaticResource RowContextMenu}" />
+                                </Style>
+                                
+                                <Style TargetType="TextBlock" x:Key="NumberCellStyle" BasedOn="{StaticResource TextCenteredTextBlockStyle}">
+                                    <Setter Property="Foreground" Value="Black"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsUnique}" Value="False">
+                                            <Setter Property="Foreground" Value="Yellow"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsUnique}" Value="True">
+                                            <Setter Property="Foreground" Value="{StaticResource DefaultForegroundBrush}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
                                 </Style>
                             </DataGrid.Resources>
 
@@ -749,9 +881,8 @@
                                 <DataGridTextColumn
                                     MinWidth="40"
                                     MaxWidth="40"
-                                    IsReadOnly="True"
                                     Binding="{Binding Number}"
-                                    ElementStyle="{StaticResource TextCenteredTextBlockStyle}"
+                                    ElementStyle="{StaticResource NumberCellStyle}"
                                     Header="№" />
                                 <DataGridTextColumn
                                     MinWidth="300"
@@ -801,85 +932,10 @@
                                   VerticalScrollBarVisibility="Auto">
                         <ItemsControl BorderThickness="0"
                                       ItemsSource="{Binding SelectedQuestionnaire.AdditionalInformation}">
-
-                            <ItemsControl.Resources>
-
-                                <Style x:Key="ExpanderHeaderStyle" TargetType="ToggleButton">
-                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                    <Setter Property="VerticalContentAlignment" Value="Center" />
-                                    <Setter Property="Background" Value="Transparent" />
-                                    <Setter Property="Foreground" Value="{StaticResource DefaultForegroundBrush}" />
-                                    <Setter Property="Padding" Value="6" />
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="ToggleButton">
-                                                <Border Background="{TemplateBinding Background}"
-                                                        Padding="{TemplateBinding Padding}"
-                                                        CornerRadius="3">
-                                                    <DockPanel>
-                                                        <Path x:Name="Arrow"
-                                                              Data="M 0 0 L 6 6 L 12 0"
-                                                              Stroke="{TemplateBinding Foreground}"
-                                                              StrokeThickness="2"
-                                                              VerticalAlignment="Center"
-                                                              HorizontalAlignment="Right"
-                                                              Margin="5,0,0,0"
-                                                              RenderTransformOrigin="0.5, 0.5">
-                                                            <Path.RenderTransform>
-                                                                <RotateTransform Angle="0" />
-                                                            </Path.RenderTransform>
-                                                        </Path>
-                                                        <ContentPresenter VerticalAlignment="Center"
-                                                                          DockPanel.Dock="Left"
-                                                                          Margin="10, 0, 0, 0" />
-                                                    </DockPanel>
-                                                </Border>
-                                                <ControlTemplate.Triggers>
-                                                    <Trigger Property="IsChecked" Value="True">
-                                                        <Setter TargetName="Arrow" Property="RenderTransform">
-                                                            <Setter.Value>
-                                                                <RotateTransform Angle="180" />
-                                                            </Setter.Value>
-                                                        </Setter>
-                                                    </Trigger>
-                                                </ControlTemplate.Triggers>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-
-                                <Style TargetType="Expander">
-                                    <Setter Property="Padding" Value="10" />
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="Expander">
-                                                <DockPanel>
-                                                    <ToggleButton
-                                                        IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
-                                                        Content="{TemplateBinding Header}"
-                                                        Style="{StaticResource ExpanderHeaderStyle}"
-                                                        DockPanel.Dock="Top" />
-                                                    <ContentPresenter x:Name="ExpandSite"
-                                                                      Visibility="Collapsed"
-                                                                      Focusable="false"
-                                                                      Margin="{TemplateBinding Padding}" />
-                                                </DockPanel>
-                                                <ControlTemplate.Triggers>
-                                                    <Trigger Property="IsExpanded" Value="True">
-                                                        <Setter TargetName="ExpandSite" Property="Visibility"
-                                                                Value="Visible" />
-                                                    </Trigger>
-                                                </ControlTemplate.Triggers>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-
-                            </ItemsControl.Resources>
-
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Expander Header="{Binding Key}"
+                                              Padding="10"
                                               Foreground="{StaticResource DefaultForegroundBrush}"
                                               FontSize="16">
                                         <TextBlock

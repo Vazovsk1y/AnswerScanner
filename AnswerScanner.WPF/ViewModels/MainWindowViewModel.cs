@@ -195,6 +195,30 @@ internal partial class MainWindowViewModel :
         IsDropCommandEnabled = true;
     }
     
+    [RelayCommand]
+    private void RemoveQuestion(QuestionViewModel? question)
+    {
+        if (question is null)
+        {
+            return;
+        }
+        
+        IsDropCommandEnabled = false;
+
+        var dialogResult = MessageBox.Show("Вы уверены, что желаете удалить данную запись?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Question);
+        if (dialogResult == MessageBoxResult.Yes)
+        {
+            var isSuccess = SelectedQuestionnaire?.Questions.Remove(question);
+            if (isSuccess is true)
+            {
+                question.Parent = null;
+                SelectedQuestionnaire?.RefreshMissedQuestionNumbers();
+            }
+        }
+        
+        IsDropCommandEnabled = true;
+    }
+    
     public void Receive(QuestionnairesReadMessage message)
     {
         Application.Current?.Dispatcher.Invoke(() =>

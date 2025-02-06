@@ -124,7 +124,7 @@ public partial class QuestionnairesUploadViewModel : ObservableRecipient
                     await Parallel.ForEachAsync(chunkFiles, parallelOptions, (item, _) =>
                     {
                         var parser = factory.CreateParser(item.selectedFile.FilePath);
-                        var result = parser.ParseFromFile(item.fileBytes, SelectedQuestionnaireType.Value);
+                        var result = parser.ParseFromFile(item.fileBytes, item.selectedFile.SelectedQuestionnaireType.Value);
 
                         Application.Current?.Dispatcher.Invoke(() =>
                         {

@@ -121,9 +121,6 @@
             FontSize="14"
             ItemsSource="{Binding SelectedFiles}">
             <DataGrid.Resources>
-                <CollectionViewSource x:Key="AvailableQuestionnaireTypes"
-                                      Source="{x:Static viewmodels:QuestionnairesUploadViewModel.AvailableQuestionnaireTypes}" />
-                
                 <Style x:Key="CheckBoxStyle" TargetType="CheckBox">
                     <Setter Property="VerticalAlignment" Value="Center" />
                     <Setter Property="HorizontalAlignment" Value="Center" />
@@ -149,7 +146,7 @@
 
                     <DataGridTemplateColumn.CellEditingTemplate>
                         <DataTemplate>
-                            <ComboBox ItemsSource="{Binding Source={StaticResource AvailableQuestionnaireTypes}}"
+                            <ComboBox ItemsSource="{x:Static viewmodels:QuestionnairesUploadViewModel.AvailableQuestionnaireTypes}"
                                       SelectedItem="{Binding SelectedQuestionnaireType}"
                                       IsEnabled="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType=Window}}"
                                       Padding="5"

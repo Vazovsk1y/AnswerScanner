@@ -11,7 +11,7 @@ public partial class QuestionAddViewModel : ObservableRecipient
     
     public required int QuestionIndex { get; init; }
     
-    public required int QuestionNumber { get; init; }
+    public required uint QuestionNumber { get; init; }
     
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ConfirmCommand))]
@@ -29,9 +29,12 @@ public partial class QuestionAddViewModel : ObservableRecipient
             Number = QuestionNumber,
             Text = QuestionText!,
             Answer = Answer!,
+            Parent = Questionnaire,
         };
         
         Questionnaire.Questions.Insert(QuestionIndex, question);
+        Questionnaire.MissedQuestionNumbers?.Remove(question.Number);
+        
         window.Close();
     }
     
