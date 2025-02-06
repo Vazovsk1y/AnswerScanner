@@ -17,7 +17,7 @@ internal class QuestionnaireXlsxFileExporter : IQuestionnaireFileExporter
         {
             Questionnaires = questionnaires,
             AnswerIndexes =  Enumerable
-                .Range(1, questionnaires.MaxBy(e => e.Questions.Count)?.Questions.Count ?? default)
+                .Range(1, questionnaires.MaxBy(e => e.Questions.Count)?.Questions.Count ?? 0)
                 .ToList(),
         };
 

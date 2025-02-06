@@ -65,7 +65,7 @@ internal partial class QuestionnairesExportViewModel : ObservableObject
             .Select(e => new QuestionnaireExportModel(e.Name, e.FilePath,
                 e.Questions
                     .OrderBy(o => o.Number)
-                    .Select(o => new QuestionExportModel(o.Number, AnswerTypeToNumber[o.Answer.Value]))
+                    .Select(o => new QuestionExportModel((int)o.Number, AnswerTypeToNumber[o.Answer.Value]))
                     .ToList()))
             .ToList();
 

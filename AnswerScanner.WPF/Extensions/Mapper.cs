@@ -8,21 +8,32 @@ public static class Mapper
 {
     public static QuestionnaireViewModel ToViewModel(this Questionnaire questionnaire, string filePath, string name)
     {
-        return new QuestionnaireViewModel
+        var result = new QuestionnaireViewModel
         {
             Name = name,
             FilePath = filePath,
-            Questions = new ObservableCollection<QuestionViewModel>(questionnaire.Questions.Select(e => e.ToViewModel())),
             AdditionalInformation = questionnaire.AdditionalInformation.Select(e => new AdditionalInformationItemViewModel(e.Key, e.Value)).ToList(),
             Type = questionnaire.Type.ToViewModel(),
         };
+
+        var questions = new ObservableCollection<QuestionViewModel>(questionnaire.Questions.Select(e => e.ToViewModel(result)));
+        foreach (var question in questions)
+        {
+            question.Parent = result;
+        }
+
+        result.Questions = questions;
+        result.RefreshMissedQuestionNumbers();
+        
+        return result;
     }
 
-    private static QuestionViewModel ToViewModel(this Question question)
+    private static QuestionViewModel ToViewModel(this Question question, QuestionnaireViewModel parent)
     {
         return new QuestionViewModel
         {
-            Number = question.Number,
+            Parent = parent,
+            Number = (uint)question.Number,
             Text = question.Text,
             Answer = question.Answer.ToViewModel(),
         };
